@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0B4B39;
+  --color-primary-dark: #063D2C;
+  --color-primary-hover: #08382B;
+  --color-primary-light: #EBF3ED;
+  --color-sage: #84A98C;
+  --color-sage-light: #F0F6F1;
+  --color-hero-sage: #E8EFE0;
+  --color-hero-peach: #F9E7D8;
+  --color-accent: #EA580C;
+  --color-accent-orange: #EA580C;
+  --color-accent-gold: #C89C50;
+  --color-herbal-cream: #F8F7F2;
+  --color-trust-bg: #F6F6F0;
+  --color-reviews-bg: #F3EEE4;
+  --color-product-bg: #F1F5F4;
+  --color-charcoal: #0F172A;
+  --color-muted-text: #64748B;
+  --color-border-subtle: #E2E8F0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--color-herbal-cream);
+    color: var(--color-charcoal);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Tap target guarantee */
+.touch-target-44 {
+  min-height: 44px;
+  min-width: 44px;
+}
