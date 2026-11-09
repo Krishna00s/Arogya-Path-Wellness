@@ -1,125 +1,127 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Leaf, Mail, ShieldCheck, Heart, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { ArrowUp } from "lucide-react";
 
 export function Footer() {
-  return (
-    <footer className="bg-[#063D2C] text-slate-300 pt-10 pb-24 md:pb-10 border-t border-emerald-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10 pb-10 border-b border-emerald-900/60">
-          {/* Brand Info (2 cols on lg) */}
-          <div className="lg:col-span-2 space-y-3.5">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-[#0B4B39] flex items-center justify-center text-emerald-300 shadow-2xs">
-                <Leaf className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tight text-white font-serif leading-none">
-                  Arogya<span className="text-emerald-400">Path</span>
-                </span>
-                <span className="text-[8px] font-bold tracking-[0.2em] text-emerald-300 uppercase mt-0.5">
-                  THE AYURVEDA PEOPLE
-                </span>
-              </div>
-            </div>
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-            <p className="text-xs text-emerald-100/70 leading-relaxed max-w-sm">
-              Rooted in centuries-old Ayurvedic wisdom, crafted for modern lifestyle needs. We formulate authentic, pure herbal supplements with verified botanicals and transparent manufacturing.
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <footer className="bg-[#ecf4e9] text-[#333333] pt-12 pb-24 md:pb-8 border-t border-[#dce8d8] relative">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10">
+          {/* Column 1: Brand Info & Description */}
+          <div className="space-y-4">
+            <Link href="/" className="inline-block group focus:outline-none mb-1">
+              <Image
+                src="/logo.png"
+                alt="Arogya Path - The Path to Wellness"
+                width={150}
+                height={75}
+                className="h-[60px] sm:h-[66px] w-auto object-contain transition-transform group-hover:scale-102"
+              />
+            </Link>
+
+            <p className="text-xs sm:text-[13px] text-[#444444] leading-relaxed max-w-sm">
+              Discover natural healing with Ayurveda—herbal remedies, wellness tips, and holistic care for a balanced and healthy lifestyle.
             </p>
 
-            <div className="flex items-center gap-2.5 pt-1 text-xs text-emerald-300">
-              <div className="flex items-center gap-1.5 bg-emerald-900/50 px-2.5 py-1 rounded-full border border-emerald-800 text-[11px] font-semibold">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                <span>GMP Assured</span>
+            <div className="space-y-1 text-xs sm:text-[13px] font-medium text-[#222222] pt-1">
+              <div>
+                <a href="tel:+919099857272" className="hover:text-[#0B4B39] transition-colors">
+                  +91 9099857272
+                </a>
               </div>
-              <div className="flex items-center gap-1.5 bg-emerald-900/50 px-2.5 py-1 rounded-full border border-emerald-800 text-[11px] font-semibold">
-                <Heart className="w-3.5 h-3.5 text-rose-400" />
-                <span>100% Ayurvedic</span>
-              </div>
-              <div className="flex items-center gap-1.5 bg-emerald-900/50 px-2.5 py-1 rounded-full border border-emerald-800 text-[11px] font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Ayush Compliant</span>
+              <div>
+                <a href="mailto:info@arogyapathwellness.com" className="hover:text-[#0B4B39] transition-colors">
+                  info@arogyapathwellness.com
+                </a>
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Column 2: SERVICES */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              Quick Links
+            <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#2e3d28]">
+              SERVICES
             </h3>
-            <ul className="space-y-2 text-xs text-slate-300">
+            <ul className="space-y-2 text-xs sm:text-[13px] text-[#444444]">
               <li>
-                <Link href="/" className="hover:text-white transition-colors">
+                <Link href="/" className="hover:text-[#0B4B39] transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <a href="#categories" className="hover:text-white transition-colors">
-                  Top Categories
+                <a href="#best-solutions" className="hover:text-[#0B4B39] transition-colors">
+                  Products
                 </a>
               </li>
               <li>
-                <a href="#concern" className="hover:text-white transition-colors">
-                  Shop by Concern
+                <a href="#contact" className="hover:text-[#0B4B39] transition-colors">
+                  Contact
                 </a>
               </li>
               <li>
-                <a href="#bestsellers" className="hover:text-white transition-colors">
-                  Our Products
+                <a href="#about" className="hover:text-[#0B4B39] transition-colors">
+                  About Us
                 </a>
               </li>
               <li>
-                <a href="#reviews" className="hover:text-white transition-colors">
-                  Customer Reviews
+                <a href="#blogs" className="hover:text-[#0B4B39] transition-colors">
+                  Blogs
                 </a>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="hover:text-[#0B4B39] transition-colors cursor-pointer"
+                  onClick={() => alert("[APP] Arogya Path mobile app coming soon to Google Play & Apple App Store!")}
+                >
+                  Get App
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Policies */}
+          {/* Column 3: TERMS */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              Policies
+            <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#2e3d28]">
+              TERMS
             </h3>
-            <ul className="space-y-2 text-xs text-slate-300">
+            <ul className="space-y-2 text-xs sm:text-[13px] text-[#444444]">
               <li>
                 <button
                   type="button"
-                  className="hover:text-white cursor-pointer transition-colors text-left"
-                  onClick={() =>
-                    alert(
-                      "[DEMO POLICY] Shipping & Delivery: Free delivery across India for orders above ₹499."
-                    )
-                  }
+                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  onClick={() => alert("[DEMO POLICY] Shipping Policy: Free dispatch across India for orders above ₹499.")}
                 >
-                  Shipping & Delivery
+                  Shipping Policy
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  className="hover:text-white cursor-pointer transition-colors text-left"
-                  onClick={() =>
-                    alert(
-                      "[DEMO POLICY] Return & Refund: Hassle-free 7-day verified returns on sealed products."
-                    )
-                  }
-                >
-                  Return & Refund
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  className="hover:text-white cursor-pointer transition-colors text-left"
-                  onClick={() =>
-                    alert(
-                      "[DEMO POLICY] Privacy Policy: We safeguard all customer personal data in compliance with Indian IT rules."
-                    )
-                  }
+                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  onClick={() => alert("[DEMO POLICY] Privacy Policy: Customer data is confidential and protected under Indian IT rules.")}
                 >
                   Privacy Policy
                 </button>
@@ -127,52 +129,98 @@ export function Footer() {
               <li>
                 <button
                   type="button"
-                  className="hover:text-white cursor-pointer transition-colors text-left"
-                  onClick={() =>
-                    alert(
-                      "[DEMO POLICY] Terms & Conditions: Governed under the commercial laws of India. Operated by Arogya Path Marketing."
-                    )
-                  }
+                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  onClick={() => alert("[DEMO POLICY] Return & Refund: 7-day verified return process on sealed Ayurvedic products.")}
                 >
-                  Terms & Conditions
+                  Return and Refund Policy
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  onClick={() => alert("[DEMO POLICY] Terms & Conditions: Governed under the laws of India. Operated by Arogya Path Marketing.")}
+                >
+                  Terms and conditions
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  onClick={() => alert("[CONTACT] Customer Care: Mon – Sat, 9am – 6pm. Call: +91 9099857272")}
+                >
+                  Contact Us
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Contact Details */}
+          {/* Column 4: ADDRESS */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              Customer Support
+            <h3 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-[#2e3d28]">
+              ADDRESS
             </h3>
-            <div className="space-y-2 text-xs text-slate-300">
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>support@arogyapathwellness.com</span>
+            <div className="space-y-2 text-xs sm:text-[13px] text-[#444444] leading-relaxed">
+              <div className="font-bold text-[#222222]">
+                Arogya Path Marketing
               </div>
-              <div className="text-[11px] text-emerald-200/70 pt-1 leading-relaxed">
-                Operating Entity: <strong className="text-white">Arogya Path Marketing</strong><br />
-                Hours: Mon – Sat, 9:00 AM – 6:00 PM IST
+              <div>
+                15 1st Floor, Ujala Avenue, Opp Vishala Hotel, Sarkhej Road, Juhapura, Ahmedabad Gujarat ( INDIA ) - 380055
+              </div>
+              <div className="pt-1 font-medium text-[#222222]">
+                +91 9099857272
               </div>
             </div>
           </div>
         </div>
 
-        {/* Statutory Health Disclaimer */}
-        <div className="py-5 border-b border-emerald-900/40 text-[10.5px] text-emerald-200/60 leading-relaxed">
-          <strong className="text-emerald-200/90 font-semibold">Statutory AYUSH & Health Disclaimer:</strong> All formulations on Arogya Path Wellness are classical and proprietary herbal dietary supplements prepared under compliant GMP conditions. These products are not intended to diagnose, treat, cure, or prevent any acute disease. Please consult a qualified Ayurvedic physician before beginning any new health regimen. Content on this website is for educational and demo storefront presentation only.
-        </div>
-
-        {/* Copyright & Operating Entity */}
-        <div className="pt-5 flex flex-col sm:flex-row items-center justify-between text-[11px] text-emerald-200/60 gap-2 text-center sm:text-left">
-          <div>
-            © 2026 Arogya Path Wellness. Operated by Arogya Path Marketing. All Rights Reserved.
+        {/* Bottom Bar: Copyright & Marketplace Links */}
+        <div className="pt-6 border-t border-[#dce8d8] flex flex-col md:flex-row items-center justify-between text-xs text-[#555555] gap-4">
+          <div className="text-center md:text-left">
+            Copyright ©2026 Arogya Path Marketing All Rights Reserved
           </div>
-          <div className="text-amber-300/80 font-bold text-[10px] uppercase tracking-wider">
-            Milestone 1 Frontend Demonstration
+
+          {/* Also Available On Marketplace Badges */}
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <span className="text-xs text-[#666666] font-medium">Also available on:</span>
+            
+            {/* Flipkart */}
+            <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-white rounded-md border border-[#dce8d8] shadow-2xs text-[11px] font-bold text-[#2874F0]">
+              <span className="italic font-extrabold">Flipkart</span>
+              <span className="text-amber-500 font-bold">★</span>
+            </div>
+
+            {/* Amazon */}
+            <div className="inline-flex items-center px-2.5 py-1 bg-white rounded-md border border-[#dce8d8] shadow-2xs text-[11px] font-bold text-slate-900">
+              <span>amazon</span>
+              <span className="text-amber-500 text-[9px] ml-0.5 font-black">◡</span>
+            </div>
+
+            {/* Myntra */}
+            <div className="inline-flex items-center px-2.5 py-1 bg-white rounded-md border border-[#dce8d8] shadow-2xs text-[11px] font-black text-[#FF3F6C]">
+              <span>Myntra</span>
+            </div>
+
+            {/* JioMart */}
+            <div className="inline-flex items-center px-2.5 py-1 bg-white rounded-md border border-[#dce8d8] shadow-2xs text-[11px] font-black text-[#0078AD]">
+              <span>JioMart</span>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          aria-label="Scroll to top of page"
+          className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-[#204617] text-white flex items-center justify-center shadow-lg hover:bg-[#15320e] active:scale-95 transition-all cursor-pointer"
+        >
+          <ArrowUp className="w-5 h-5 stroke-[2.5]" />
+        </button>
+      )}
     </footer>
   );
 }

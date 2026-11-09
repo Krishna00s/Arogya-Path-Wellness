@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { X, Leaf, ChevronRight, Mail, MapPin } from "lucide-react";
+import Image from "next/image";
+import { X, ChevronRight, Mail, MapPin } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { MOCK_CATEGORIES } from "@/data/mock-categories";
 
@@ -22,25 +23,25 @@ export function MobileNavDrawer() {
       {/* Drawer Panel */}
       <div className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-250">
         {/* Header */}
-        <div className="p-4 border-b border-emerald-950 flex items-center justify-between bg-[#063D2C] text-white">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#0B4B39] flex items-center justify-center text-emerald-300">
-              <Leaf className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="font-extrabold text-sm tracking-tight font-serif leading-none">
-                Arogya<span className="text-emerald-400">Path</span>
-              </div>
-              <div className="text-[8px] text-emerald-300 font-bold uppercase tracking-[0.2em] mt-0.5">
-                THE AYURVEDA PEOPLE
-              </div>
-            </div>
-          </div>
+        <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-white text-slate-900">
+          <Link
+            href="/"
+            onClick={() => setIsMobileNavOpen(false)}
+            className="flex items-center focus:outline-none"
+          >
+            <Image
+              src="/logo.png"
+              alt="Arogya Path - The Path to Wellness"
+              width={120}
+              height={55}
+              className="h-[46px] w-auto object-contain"
+            />
+          </Link>
           <button
             type="button"
             onClick={() => setIsMobileNavOpen(false)}
             aria-label="Close menu"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-emerald-900 transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-700 hover:text-black hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

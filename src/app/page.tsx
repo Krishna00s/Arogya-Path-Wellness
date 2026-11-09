@@ -1,51 +1,43 @@
 import React from "react";
-import { HeroSection } from "@/components/home/HeroSection";
-import { TrustStrip } from "@/components/home/TrustStrip";
-import { CategoryGrid } from "@/components/home/CategoryGrid";
-import { ConcernSection } from "@/components/home/ConcernSection";
-import { PromoSplitBanners } from "@/components/home/PromoSplitBanners";
-import { CuratedProducts } from "@/components/home/CuratedProducts";
-import { FocusBanner } from "@/components/home/FocusBanner";
-import { DealsSection } from "@/components/home/DealsSection";
-import { ValueProps } from "@/components/home/ValueProps";
-import { PhilosophyBanner } from "@/components/home/PhilosophyBanner";
-import { Testimonials } from "@/components/home/Testimonials";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { SelectConcern } from "@/components/home/SelectConcern";
+import { BestSolutionsCarousel } from "@/components/home/BestSolutionsCarousel";
+import { WatchAndShop } from "@/components/home/WatchAndShop";
+import { PopularCategories } from "@/components/home/PopularCategories";
+import { MovingTicker } from "@/components/home/MovingTicker";
+import { AyurvedicSolutionTabs } from "@/components/home/AyurvedicSolutionTabs";
+import { CampaignTrustBanner } from "@/components/home/CampaignTrustBanner";
+import { HairCareCollection } from "@/components/home/HairCareCollection";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col w-full overflow-hidden">
-      {/* 1. Hero Banner with botanical background & authentic care message */}
-      <HeroSection />
+    <div className="flex flex-col w-full overflow-hidden pb-24 lg:pb-0">
+      {/* B. Promotional Hero Carousel (Touch swipe, ~5s auto-advance, dots) */}
+      <HeroCarousel />
 
-      {/* 2. Trust Strip (100% Ayurvedic, GMP Certified, Fast Delivery, Easy Returns) */}
-      <TrustStrip />
+      {/* C. Select Your Concern (Circular image tiles, horizontal scroll) */}
+      <SelectConcern />
 
-      {/* 3. Top Categories Grid (10 categories with botanical photography & pill badges) */}
-      <CategoryGrid />
+      {/* D. I'm Looking for the Best Solution (~2 visible cards mobile, Testo Booster Tablets first) */}
+      <BestSolutionsCarousel />
 
-      {/* 4. Shop by Concern with interactive filter pills (All, Immunity, Digestion, etc.) */}
-      <ConcernSection />
+      {/* E. Watch & Shop (2 portrait 9:16 reels side-by-side, video modal) */}
+      <WatchAndShop />
 
-      {/* 5. Promotional Split Banners (Immunity & Digestive Care dual feature cards) */}
-      <PromoSplitBanners />
+      {/* F. Our Most Popular Categories (Horizontal carousel with subtitle & prev/next arrows) */}
+      <PopularCategories />
 
-      {/* 6. Our Products (Curated bestsellers with ratings, MRP strikethrough & Add to Cart) */}
-      <CuratedProducts />
+      {/* G. Continuous Moving Strip (Marquee ticker with key value props) */}
+      <MovingTicker />
 
-      {/* 7. Special Focus Banner (Men's Wellness for an Active Life) */}
-      <FocusBanner />
+      {/* H. Ayurvedic Solution (Text tabs with active underline, 2-column mobile product grid) */}
+      <AyurvedicSolutionTabs />
 
-      {/* 8. Top Discounted Products (20%-30% off deals) */}
-      <DealsSection />
+      {/* I. Trust & Promotional Campaign Banner ("Wellness Rooted in Ayurveda") */}
+      <CampaignTrustBanner />
 
-      {/* 9. Value Propositions (4 Pillars of Arogya Path Wellness) */}
-      <ValueProps />
-
-      {/* 10. Brand Philosophy Banner (Rooted in Ayurveda, Designed for Modern Wellness) */}
-      <PhilosophyBanner />
-
-      {/* 11. Customer Reviews (English, Hindi, and Hinglish testimonials with Demo notice) */}
-      <Testimonials />
+      {/* J. Hair Care Collection (Horizontal scrollable collection) */}
+      <HairCareCollection />
     </div>
   );
 }

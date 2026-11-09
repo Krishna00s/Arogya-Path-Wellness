@@ -11,16 +11,16 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile bottom navigation dock"
-      className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg px-2 pb-safe"
+      className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-xl px-3 pb-safe"
     >
-      <div className="flex items-center justify-around h-14 max-w-md mx-auto">
+      <div className="flex items-center justify-around h-16 max-w-md mx-auto">
         {/* Home */}
         <Link
           href="/"
-          className="flex flex-col items-center justify-center w-14 h-12 text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
+          className="flex flex-col items-center justify-center w-16 h-14 text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
         >
-          <Home className="w-5 h-5 stroke-[2.2]" />
-          <span className="text-[9.5px] font-extrabold mt-0.5 tracking-tight">
+          <Home className="w-6 h-6 stroke-[2.2]" />
+          <span className="text-[11px] font-extrabold mt-0.5 tracking-tight">
             Home
           </span>
         </Link>
@@ -29,10 +29,10 @@ export function MobileBottomNav() {
         <button
           type="button"
           onClick={() => setIsMobileNavOpen(true)}
-          className="flex flex-col items-center justify-center w-14 h-12 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
+          className="flex flex-col items-center justify-center w-16 h-14 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
         >
-          <LayoutGrid className="w-5 h-5 stroke-[2]" />
-          <span className="text-[9.5px] font-semibold mt-0.5 tracking-tight">
+          <LayoutGrid className="w-6 h-6 stroke-[2]" />
+          <span className="text-[11px] font-bold mt-0.5 tracking-tight">
             Categories
           </span>
         </button>
@@ -41,17 +41,17 @@ export function MobileBottomNav() {
         <button
           type="button"
           onClick={() => setIsCartOpen(true)}
-          className="relative flex flex-col items-center justify-center w-14 h-12 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
+          className="relative flex flex-col items-center justify-center w-16 h-14 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
         >
           <div className="relative">
-            <ShoppingBag className="w-5 h-5 stroke-[2]" />
+            <ShoppingBag className="w-6 h-6 stroke-[2]" />
             {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-[#DC2626] text-white text-[9px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center leading-none">
+              <span className="absolute -top-1.5 -right-2 bg-[#DC2626] text-white text-[10px] font-extrabold rounded-full h-4.5 min-w-[18px] px-1 flex items-center justify-center leading-none">
                 {totalItems}
               </span>
             )}
           </div>
-          <span className="text-[9.5px] font-semibold mt-0.5 tracking-tight">
+          <span className="text-[11px] font-bold mt-0.5 tracking-tight">
             Cart
           </span>
         </button>
@@ -64,10 +64,10 @@ export function MobileBottomNav() {
               "[DEMO ACTION] Customer Account & Phone OTP login will be integrated in Milestone 3."
             )
           }
-          className="flex flex-col items-center justify-center w-14 h-12 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
+          className="flex flex-col items-center justify-center w-16 h-14 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 touch-target-44"
         >
-          <User className="w-5 h-5 stroke-[2]" />
-          <span className="text-[9.5px] font-semibold mt-0.5 tracking-tight">
+          <User className="w-6 h-6 stroke-[2]" />
+          <span className="text-[11px] font-bold mt-0.5 tracking-tight">
             Account
           </span>
         </button>

@@ -7,10 +7,10 @@ export interface Product {
   price: number; // in Rupees
   compareAtPrice: number; // in Rupees (MRP)
   discountPercent: number;
-  rating: number;
-  reviewCount: number;
+  rating?: number;
+  reviewCount?: number;
   categorySlug: string;
-  concern: "immunity" | "digestion" | "stress-sleep" | "hair-skin" | "joint-care" | "mens-wellness" | "all";
+  concern: "immunity" | "digestion" | "stress-sleep" | "hair-care" | "joint-care" | "mens-wellness" | "weight-gain" | "general-wellness" | "all";
   image: string;
   badge?: string;
   inStock: boolean;
@@ -22,18 +22,29 @@ export interface Category {
   id: string;
   slug: string;
   name: string;
-  iconName: string;
-  description: string;
+  iconName?: string;
+  description?: string;
   image: string;
-  bgColor: string;
-  textColor: string;
-  itemCount: number;
+  bgColor?: string;
+  textColor?: string;
+  itemCount?: number;
 }
 
-export interface ConcernOption {
+export interface ConcernItem {
   id: string;
   label: string;
-  concernKey: Product["concern"];
+  slug: string;
+  image: string;
+}
+
+export interface ReelItem {
+  id: string;
+  title: string;
+  productName: string;
+  productPrice: number;
+  posterImage: string;
+  videoDuration?: string;
+  productImage?: string;
 }
 
 export interface Review {
@@ -44,7 +55,7 @@ export interface Review {
   date: string;
   title: string;
   comment: string;
-  language: "en" | "hi" | "hinglish";
+  language?: "en" | "hi" | "hinglish";
   verifiedBuyer: boolean;
   productName: string;
   isDemo: true;

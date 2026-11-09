@@ -20,6 +20,10 @@ export const metadata: Metadata = {
     "Immunity booster",
     "Natural wellness India",
   ],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -36,7 +40,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="min-h-screen flex flex-col bg-[#F8F7F2] text-slate-900 antialiased selection:bg-emerald-200 selection:text-emerald-900">
+      <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased selection:bg-emerald-200 selection:text-emerald-900">
         <CartProvider>
           {/* Top Announcement Bar */}
           <AnnouncementBar />
