@@ -12,6 +12,24 @@ export function MobileNavDrawer() {
 
   if (!isMobileNavOpen) return null;
 
+  const handleCategoryNav = (slug: string) => {
+    setIsMobileNavOpen(false);
+    if (slug === "hair-care") {
+      const el = document.getElementById("hair-care");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      window.dispatchEvent(
+        new CustomEvent("switch-concern-tab", { detail: { slug: "hair-care" } })
+      );
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("switch-concern-tab", { detail: { slug } })
+    );
+    const el = document.getElementById("ayurvedic-solutions");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="fixed inset-0 z-50 lg:hidden flex">
       {/* Backdrop */}
@@ -49,12 +67,6 @@ export function MobileNavDrawer() {
 
         {/* Content Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
-          {/* Demo Note */}
-          <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-950 flex items-start gap-2">
-            <span className="font-bold shrink-0">DEMO:</span>
-            <span>Mobile storefront prototype. Pages are in demonstration mode.</span>
-          </div>
-
           {/* Quick Jump */}
           <div>
             <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
@@ -70,35 +82,43 @@ export function MobileNavDrawer() {
                 <ChevronRight className="w-4 h-4 text-[#0B4B39]" />
               </Link>
               <a
-                href="#categories"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <span>Top Categories</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
-              </a>
-              <a
                 href="#concern"
                 onClick={() => setIsMobileNavOpen(false)}
                 className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
               >
-                <span>Shop by Concern</span>
+                <span>Select Your Concern</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </a>
               <a
-                href="#bestsellers"
+                href="#best-solutions"
                 onClick={() => setIsMobileNavOpen(false)}
                 className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
               >
-                <span>Our Products</span>
+                <span>Best Solutions</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </a>
               <a
-                href="#deals"
+                href="#popular-categories"
                 onClick={() => setIsMobileNavOpen(false)}
                 className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
               >
-                <span>Special Offers</span>
+                <span>Popular Categories</span>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </a>
+              <a
+                href="#ayurvedic-solutions"
+                onClick={() => setIsMobileNavOpen(false)}
+                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                <span>Ayurvedic Solutions</span>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </a>
+              <a
+                href="#hair-care"
+                onClick={() => setIsMobileNavOpen(false)}
+                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                <span>Hair Care Collection</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </a>
             </div>
@@ -107,21 +127,21 @@ export function MobileNavDrawer() {
           {/* Categories Grid */}
           <div>
             <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
-              Top Categories
+              Shop By Concern
             </h4>
             <div className="space-y-1">
               {MOCK_CATEGORIES.map((cat) => (
-                <a
+                <button
                   key={cat.id}
-                  href="#categories"
-                  onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-slate-700 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors"
+                  type="button"
+                  onClick={() => handleCategoryNav(cat.slug)}
+                  className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs text-slate-700 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors text-left cursor-pointer"
                 >
                   <span className="font-semibold">{cat.name}</span>
                   <span className="text-[10px] text-slate-400">
                     {cat.itemCount} items
                   </span>
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -134,11 +154,13 @@ export function MobileNavDrawer() {
             <div className="space-y-2 text-xs text-slate-600">
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#0B4B39]" />
-                <span>support@arogyapathwellness.com</span>
+                <a href="mailto:info@arogyapathwellness.com" className="hover:text-[#0B4B39]">
+                  info@arogyapathwellness.com
+                </a>
               </div>
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#0B4B39] shrink-0 mt-0.5" />
-                <span>Arogya Path Marketing</span>
+                <span>Ward No. 16, Ashok Nagar, Barwa Toli, Lohardaga, Jharkhand - 835302</span>
               </div>
             </div>
           </div>
@@ -146,7 +168,7 @@ export function MobileNavDrawer() {
 
         {/* Footer */}
         <div className="p-3 border-t border-slate-200 bg-slate-50 text-[10px] text-slate-500 text-center font-medium">
-          © 2026 Arogya Path Wellness • Demo Mode
+          © 2026 Arogya Path Marketing • All Rights Reserved
         </div>
       </div>
     </div>

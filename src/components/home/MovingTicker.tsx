@@ -12,7 +12,7 @@ export function MovingTicker() {
   return (
     <div
       aria-label="Brand promises marquee"
-      className="w-full bg-[#063D2C] text-emerald-100 py-3.5 sm:py-4 overflow-hidden border-y border-emerald-900 select-none"
+      className="w-full bg-[#425848] text-white py-3.5 sm:py-4 overflow-hidden border-y border-[#536d5b] select-none"
     >
       <div className="flex w-full overflow-hidden">
         {/* Animated Track (duplicated for seamless infinite loop) */}

@@ -13,46 +13,87 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: "slide-1",
-    image: "/hero-banner-1.jpg",
-    alt: "Arogya Path Pure Shilajit Gold - Natural Stamina Ka Dose",
+    image: "/couple-promoting-mens-natural-support.png",
+    alt: "Couple Promoting Men’s Natural Support - Testo Natural Strength & Stamina",
     link: "#best-solutions",
   },
   {
     id: "slide-2",
-    image: "/hero-banner-2.jpg",
-    alt: "Arogya Path Digest Zen Herbal Churna - Healthy Gut, Active Life",
-    link: "#ayurvedic-solutions",
+    image: "/ayurvedic-stamina-blend-infographic.png",
+    alt: "Ayurvedic Stamina Blend Infographic - Testo Natural Power+ Key Herbal Ingredients",
+    link: "#best-solutions",
   },
   {
     id: "slide-3",
-    image: "/hero-banner-3.jpg",
-    alt: "Arogya Path Immuno Plus Tablets - Stronger Immunity Daily",
-    link: "#ayurvedic-solutions",
+    image: "/testo-natural-supplement-advertisement.png",
+    alt: "Testo Natural Supplement Advertisement - Daily Support for Men's Strength, Stamina & Overall Wellness",
+    link: "#best-solutions",
   },
   {
     id: "slide-4",
-    image: "/hero-banner-4.jpg",
-    alt: "Arogya Path Kesh Sanjeevani - Root Strengthening Hair Care",
-    link: "#hair-care",
+    image: "/trusted-wellness-for-men.png",
+    alt: "Trusted Wellness for Men - Arogya Path Testo Natural Power+ Trusted by Lakhs of Indian Men",
+    link: "#best-solutions",
   },
 ];
 
 export function HeroCarousel() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const minSwipeDistance = 45;
-
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isProgrammaticScroll = useRef(false);
   const total = HERO_SLIDES.length;
 
+  const scrollToSlide = useCallback(
+    (index: number) => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const targetIndex = (index + total) % total;
+      const slideWidth = container.clientWidth;
+      isProgrammaticScroll.current = true;
+      container.scrollTo({
+        left: targetIndex * slideWidth,
+        behavior: "smooth",
+      });
+      setCurrent(targetIndex);
+
+      setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 400);
+    },
+    [total]
+  );
+
   const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % total);
-  }, [total]);
+    scrollToSlide(current + 1);
+  }, [current, scrollToSlide]);
 
   const prevSlide = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + total) % total);
-  }, [total]);
+    scrollToSlide(current - 1);
+  }, [current, scrollToSlide]);
+
+  // Synchronize active dot with user's native swipe gestures
+  const handleScroll = () => {
+    isScrollingRef.current = true;
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 150);
+
+    if (isProgrammaticScroll.current) return;
+
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const slideWidth = container.clientWidth;
+    if (slideWidth > 0) {
+      const newIndex = Math.round(container.scrollLeft / slideWidth);
+      if (newIndex >= 0 && newIndex < total && newIndex !== current) {
+        setCurrent(newIndex);
+      }
+    }
+  };
 
   // Automatic slide rotation approximately every 5 seconds, respect pause
   useEffect(() => {
@@ -63,26 +104,22 @@ export function HeroCarousel() {
     return () => clearInterval(interval);
   }, [isPaused, nextSlide]);
 
-  // Touch Swipe handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-    setIsPaused(true);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    const distance = touchStartX.current - touchEndX.current;
-    if (Math.abs(distance) > minSwipeDistance) {
-      if (distance > 0) {
-        nextSlide();
-      } else {
-        prevSlide();
-      }
+  const handleSlideClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // If user was swiping, suppress accidental click navigation
+    if (isScrollingRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
     }
-    setIsPaused(false);
+    // Intentional tap switches to Men's Wellness and scrolls to products
+    window.dispatchEvent(
+      new CustomEvent("switch-concern-tab", { detail: { slug: "mens-wellness" } })
+    );
+    const el = document.getElementById("best-solutions");
+    if (el) {
+      e.preventDefault();
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -91,43 +128,90 @@ export function HeroCarousel() {
       className="relative w-full overflow-hidden select-none bg-white"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
     >
-      {/* Full-bleed promotional slide: authoritative 390:527 mobile proportion, 534px desktop */}
-      <div className="relative w-full aspect-[390/527] md:aspect-[1425/534] md:max-h-[534px] overflow-hidden">
-        {HERO_SLIDES.map((slide, idx) => {
-          const isActive = idx === current;
-          return (
+      {/* Relative wrapper holding both scroll container and overlay arrow buttons */}
+      <div className="relative w-full aspect-[1199/1312] sm:aspect-square md:aspect-[1254/900] md:max-h-[620px] lg:max-h-[660px] mx-auto bg-[#FAF7F2]">
+        {/* Hardware-accelerated horizontal scroll-snap track */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="w-full h-full flex overflow-x-auto overflow-y-hidden no-scrollbar snap-x snap-mandatory touch-scroll-x"
+        >
+          {HERO_SLIDES.map((slide, idx) => (
             <div
               key={slide.id}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${
-                isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
-              }`}
+              className="w-full h-full shrink-0 snap-start snap-always relative select-none"
             >
-              <a href={slide.link} className="relative block w-full h-full focus:outline-none">
+              <a
+                href={slide.link}
+                onClick={handleSlideClick}
+                draggable={false}
+                className="relative block w-full h-full focus:outline-none select-none"
+              >
                 <Image
                   src={slide.image}
                   alt={slide.alt}
                   fill
                   priority={idx === 0}
-                  sizes="(max-width: 768px) 100vw, 1440px"
-                  className="object-cover object-top"
+                  draggable={false}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 768px, 1440px"
+                  className="object-contain pointer-events-none select-none"
                 />
               </a>
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Previous Slide Arrow Button (Outside the scroll container for clean touch events) */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            prevSlide();
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            prevSlide();
+          }}
+          aria-label="Previous slide"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 shadow-md flex items-center justify-center transition-all duration-200 opacity-75 hover:opacity-100 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer touch-manipulation"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Next Slide Arrow Button */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            nextSlide();
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            nextSlide();
+          }}
+          aria-label="Next slide"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 shadow-md flex items-center justify-center transition-all duration-200 opacity-75 hover:opacity-100 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer touch-manipulation"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
 
       {/* Accessible Pagination Indicators */}
-      <div className="flex items-center justify-center gap-2 py-2.5 bg-white">
+      <div className="flex items-center justify-center gap-2 py-3 bg-white">
         {HERO_SLIDES.map((_, idx) => (
           <button
             key={idx}
             type="button"
-            onClick={() => setCurrent(idx)}
+            onClick={() => scrollToSlide(idx)}
             aria-label={`Go to slide ${idx + 1}`}
             className={`rounded-full transition-all duration-300 touch-target-44 flex items-center justify-center ${
               idx === current

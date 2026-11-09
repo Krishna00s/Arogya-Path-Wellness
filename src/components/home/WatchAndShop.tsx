@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Play, X, ShoppingBag, ArrowRight } from "lucide-react";
 import { WATCH_AND_SHOP_REELS } from "@/data/mock-categories";
@@ -12,8 +12,19 @@ import { MOCK_PRODUCTS } from "@/data/mock-products";
 export function WatchAndShop() {
   const [activeReel, setActiveReel] = useState<ReelItem | null>(null);
   const { addToCart, setIsCartOpen } = useCart();
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleScroll = () => {
+    isScrollingRef.current = true;
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 150);
+  };
 
   const handleOpenReel = (reel: ReelItem) => {
+    if (isScrollingRef.current) return;
     setActiveReel(reel);
   };
 
@@ -40,14 +51,23 @@ export function WatchAndShop() {
             Real botanical formulations explained in short wellness videos
           </p>
         </div>
+      </div>
 
-        {/* 2 Portrait Cards Side by Side on Mobile, 6 Reels in a Row on Larger Screens */}
-        <div className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-4 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory pb-3 lg:pb-0">
-          {WATCH_AND_SHOP_REELS.map((reel) => (
+      {/* 2 Portrait Cards Side by Side on Mobile, 6 Reels in a Row on Larger Screens: full width edge-to-edge */}
+      <div className="w-full lg:max-w-[1720px] lg:mx-auto">
+        <div
+          onScroll={handleScroll}
+          className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-4 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-3 lg:pb-0"
+        >
+          {WATCH_AND_SHOP_REELS.map((reel, idx) => (
             <div
               key={reel.id}
               onClick={() => handleOpenReel(reel)}
-              className="relative w-[195px] sm:w-[240px] md:w-[270px] lg:w-full aspect-[9/16] shrink-0 lg:shrink snap-start rounded-2xl overflow-hidden border border-slate-200/90 shadow-md cursor-pointer group bg-slate-900"
+              className={`relative w-[195px] sm:w-[240px] md:w-[270px] lg:w-full aspect-[9/16] shrink-0 lg:shrink snap-start rounded-2xl overflow-hidden border border-slate-200/90 shadow-md cursor-pointer group bg-slate-900 box-content lg:box-border touch-manipulation select-none ${
+                idx === 0 ? "pl-4 sm:pl-6 md:pl-8 lg:pl-0" : ""
+              } ${
+                idx === WATCH_AND_SHOP_REELS.length - 1 ? "pr-4 sm:pr-6 md:pr-8 lg:pr-0" : ""
+              }`}
             >
               {/* Poster Image */}
               <Image
@@ -55,14 +75,14 @@ export function WatchAndShop() {
                 alt={reel.title}
                 fill
                 sizes="(max-width: 640px) 195px, 270px"
-                className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 pointer-events-none"
               />
 
               {/* Gradient Vignette for Text Contrast */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30 pointer-events-none" />
 
               {/* Duration Chip (Top-right) */}
-              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-xs text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/20">
+              <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-xs text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/20 pointer-events-none">
                 {reel.videoDuration || "0:45"}
               </div>
 
@@ -75,12 +95,12 @@ export function WatchAndShop() {
 
               {/* Bottom Shoppable Card */}
               <div className="absolute bottom-3 left-3 right-3 z-10">
-                <h3 className="text-white text-xs sm:text-sm font-bold line-clamp-2 leading-tight drop-shadow-sm mb-2">
+                <h3 className="text-white text-xs sm:text-sm font-bold line-clamp-2 leading-tight drop-shadow-sm mb-2 pointer-events-none">
                   {reel.title}
                 </h3>
 
                 <div className="bg-white/95 backdrop-blur-xs p-2.5 rounded-xl flex items-center justify-between shadow-md">
-                  <div className="min-w-0 pr-1.5">
+                  <div className="min-w-0 pr-1.5 pointer-events-none">
                     <p className="text-xs font-bold text-slate-900 truncate">
                       {reel.productName}
                     </p>
@@ -92,12 +112,14 @@ export function WatchAndShop() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (isScrollingRef.current) return;
                       handleBuyProduct(reel);
                     }}
-                    className="w-8 h-8 rounded-xl bg-[#0B4B39] text-white flex items-center justify-center shrink-0 hover:bg-[#063D2C] transition-colors shadow-2xs"
-                    aria-label="Quick buy product from reel"
+                    aria-label={`Buy ${reel.productName}`}
+                    className="h-8.5 px-3 rounded-lg bg-[#0B4B39] text-white text-xs font-bold hover:bg-[#063D2C] active:scale-95 transition-all flex items-center gap-1 shrink-0 cursor-pointer shadow-xs touch-manipulation"
                   >
-                    <ShoppingBag className="w-4 h-4" />
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <span>Buy</span>
                   </button>
                 </div>
               </div>
@@ -106,56 +128,63 @@ export function WatchAndShop() {
         </div>
       </div>
 
-      {/* Tap Video Modal (No autoplay fake video; clean interactive preview) */}
+      {/* Video Modal Demo Overlay */}
       {activeReel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
-          <div className="relative w-full max-w-sm bg-slate-950 rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col">
-            {/* Header */}
-            <div className="p-3 flex items-center justify-between border-b border-white/10 text-white">
-              <span className="text-xs font-bold truncate pr-2">{activeReel.title}</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm aspect-[9/16] bg-slate-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between p-4 border border-white/20">
+            {/* Background Poster */}
+            <Image
+              src={activeReel.posterImage}
+              alt={activeReel.title}
+              fill
+              className="object-cover opacity-60"
+            />
+
+            {/* Top Close Bar */}
+            <div className="relative z-10 flex items-center justify-between text-white">
+              <span className="text-xs font-bold px-2.5 py-1 bg-black/60 rounded-full border border-white/20">
+                Arogya Path Reel
+              </span>
               <button
                 type="button"
                 onClick={() => setActiveReel(null)}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-                aria-label="Close video"
+                aria-label="Close video player"
+                className="w-9 h-9 rounded-full bg-black/60 flex items-center justify-center hover:bg-black/90 active:scale-90 transition-transform touch-target-44 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-white" />
               </button>
             </div>
 
-            {/* Simulated Player View */}
-            <div className="relative aspect-[9/16] w-full bg-slate-900 flex items-center justify-center">
-              <Image
-                src={activeReel.posterImage}
-                alt={activeReel.title}
-                fill
-                className="object-cover opacity-60"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-black/40">
-                <div className="w-16 h-16 rounded-full bg-[#0B4B39] text-white flex items-center justify-center shadow-lg mb-3">
-                  <Play className="w-7 h-7 fill-white ml-1" />
-                </div>
-                <p className="text-white text-xs font-semibold">
-                  Interactive Video Demonstration
-                </p>
-                <p className="text-slate-300 text-[10px] mt-1 max-w-xs">
-                  Production reel video stream will be linked in Milestone 2.
-                </p>
+            {/* Simulated Video Play Center Note */}
+            <div className="relative z-10 flex flex-col items-center justify-center text-center p-6 bg-black/40 backdrop-blur-xs rounded-2xl border border-white/10 mx-2">
+              <div className="w-14 h-14 rounded-full bg-emerald-600/90 text-white flex items-center justify-center mb-3 shadow-lg">
+                <Play className="w-7 h-7 fill-white ml-0.5" />
               </div>
+              <p className="text-white font-bold text-sm leading-snug">
+                {activeReel.title}
+              </p>
+              <p className="text-slate-300 text-xs mt-1">
+                [DEMO REEL: Video streaming will connect to cloud CDN in production]
+              </p>
             </div>
 
-            {/* Bottom Shoppable Bar */}
-            <div className="p-3 bg-white flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold text-slate-900">{activeReel.productName}</p>
-                <p className="text-xs font-extrabold text-[#0B4B39]">{formatRupees(activeReel.productPrice)}</p>
+            {/* Bottom Floating Buy Product Banner */}
+            <div className="relative z-10 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl flex items-center justify-between shadow-2xl border border-white/40">
+              <div className="min-w-0 pr-2">
+                <p className="text-xs font-medium text-slate-500">Featured in Reel</p>
+                <p className="text-sm font-extrabold text-slate-900 truncate">
+                  {activeReel.productName}
+                </p>
+                <p className="text-sm font-black text-[#0B4B39]">
+                  {formatRupees(activeReel.productPrice)}
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => handleBuyProduct(activeReel)}
-                className="px-4 py-2 bg-[#0B4B39] hover:bg-[#063D2C] text-white text-xs font-extrabold rounded-lg flex items-center gap-1.5 transition-colors uppercase tracking-wider"
+                className="h-10 px-4 rounded-xl bg-[#0B4B39] text-white text-xs font-extrabold hover:bg-[#063D2C] active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md touch-target-44 cursor-pointer"
               >
-                <span>Buy Now</span>
+                <span>Add &amp; Buy</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

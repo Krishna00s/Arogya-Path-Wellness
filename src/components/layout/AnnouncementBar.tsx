@@ -3,7 +3,7 @@ import { Sparkles, ShieldCheck, Truck } from "lucide-react";
 
 export function AnnouncementBar() {
   return (
-    <div className="bg-[#063D2C] text-white h-10 sm:h-11 md:h-12 flex items-center select-none overflow-hidden transition-all">
+    <div className="bg-[#425848] text-white h-10 sm:h-11 md:h-12 flex items-center select-none overflow-hidden border-b border-[#536d5b] transition-all">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between">
         {/* Mobile View: High impact bold ticker */}
         <div className="flex md:hidden w-full items-center justify-center gap-2.5 text-xs sm:text-[13px] font-bold tracking-wider text-center uppercase">

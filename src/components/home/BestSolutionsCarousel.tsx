@@ -10,6 +10,16 @@ import { RatingStars } from "@/components/ui/RatingStars";
 export function BestSolutionsCarousel() {
   const { addToCart, setIsCartOpen } = useCart();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleScroll = () => {
+    isScrollingRef.current = true;
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 150);
+  };
 
   // 8 Best solution products for desktop 4x2 grid and mobile swipe, starting with Testo Booster Tablets
   const bestProducts = [
@@ -26,12 +36,14 @@ export function BestSolutionsCarousel() {
   const handleAddToCart = (e: React.MouseEvent, product: (typeof bestProducts)[0]) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isScrollingRef.current) return;
     addToCart(product, 1);
   };
 
   const handleBuyNow = (e: React.MouseEvent, product: (typeof bestProducts)[0]) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isScrollingRef.current) return;
     addToCart(product, 1);
     setIsCartOpen(true);
   };
@@ -45,16 +57,23 @@ export function BestSolutionsCarousel() {
             I&apos;m looking for the Best Solution
           </h2>
         </div>
+      </div>
 
-        {/* Horizontal Carousel on Mobile / Tablet, Responsive 4-Column Word Wrap Grid on Larger Screens */}
+      {/* Horizontal Carousel on Mobile / Tablet, Responsive 4-Column Word Wrap Grid on Larger Screens: full width edge-to-edge */}
+      <div className="w-full lg:max-w-[1720px] lg:mx-auto">
         <div
           ref={scrollContainerRef}
-          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 md:gap-7 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory pb-4 pt-1 lg:pb-0"
+          onScroll={handleScroll}
+          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 md:gap-7 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-4 pt-1 lg:pb-0"
         >
-          {bestProducts.map((product) => (
+          {bestProducts.map((product, idx) => (
             <div
               key={product.id}
-              className="w-[315px] sm:w-[350px] md:w-[380px] lg:w-full shrink-0 lg:shrink snap-start bg-transparent border-0 shadow-none flex flex-col justify-between"
+              className={`w-[285px] sm:w-[325px] md:w-[360px] lg:w-full shrink-0 lg:shrink snap-start bg-transparent border-0 shadow-none flex flex-col justify-between box-content lg:box-border ${
+                idx === 0 ? "pl-4 sm:pl-6 md:pl-8 lg:pl-0" : ""
+              } ${
+                idx === bestProducts.length - 1 ? "pr-4 sm:pr-6 md:pr-8 lg:pr-0" : ""
+              }`}
             >
               {/* Product Image: 1:1 Aspect Ratio with more width and height, seamless white background */}
               <div className="relative aspect-square w-full bg-white overflow-hidden rounded-xl">
@@ -112,7 +131,7 @@ export function BestSolutionsCarousel() {
                     type="button"
                     onClick={(e) => handleAddToCart(e, product)}
                     aria-label="Add to cart"
-                    className="h-11 sm:h-12 w-12 sm:w-13 bg-[#222222] hover:bg-black text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer"
+                    className="h-11 sm:h-12 w-12 sm:w-13 bg-[#222222] hover:bg-[#3d3d3d] hover:brightness-110 text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer touch-manipulation"
                   >
                     <ShoppingCart className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white stroke-[2]" />
                   </button>
@@ -121,7 +140,7 @@ export function BestSolutionsCarousel() {
                     type="button"
                     onClick={(e) => handleBuyNow(e, product)}
                     aria-label="Buy now"
-                    className="flex-1 h-11 sm:h-12 bg-[#355E2B] hover:bg-[#2C4E24] text-white font-bold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer"
+                    className="flex-1 h-11 sm:h-12 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation"
                   >
                     BUY NOW
                   </button>

@@ -17,8 +17,8 @@ export function HairCareCollection() {
 
   return (
     <section id="hair-care" className="py-8 sm:py-12 bg-white w-full">
+      {/* Centered Heading */}
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
-        {/* Centered Heading on Desktop, Left-aligned on Mobile (No arrows on larger screens) */}
         <div className="flex flex-col text-center lg:text-center mb-6 sm:mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-[#111827] tracking-tight">
             Hair Care
@@ -27,16 +27,22 @@ export function HairCareCollection() {
             Formulated with Bhringraj, Amla & cold-pressed botanical oils
           </p>
         </div>
+      </div>
 
-        {/* Horizontal Carousel on Mobile, 4-Column Grid on Larger Screens */}
+      {/* Horizontal Carousel on Mobile, 4-Column Grid on Larger Screens: full width edge-to-edge */}
+      <div className="w-full lg:max-w-[1720px] lg:mx-auto">
         <div
           ref={scrollContainerRef}
-          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible no-scrollbar scroll-smooth snap-x snap-mandatory pb-3 lg:pb-0"
+          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible no-scrollbar scroll-smooth snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-3 lg:pb-0"
         >
-          {collectionProducts.map((product) => (
+          {collectionProducts.map((product, idx) => (
             <div
               key={product.id}
-              className="w-[285px] sm:w-[310px] md:w-[330px] lg:w-full shrink-0 lg:shrink snap-start"
+              className={`w-[270px] sm:w-[300px] md:w-[330px] lg:w-full shrink-0 lg:shrink snap-start box-content lg:box-border ${
+                idx === 0 ? "pl-4 sm:pl-6 md:pl-8 lg:pl-0" : ""
+              } ${
+                idx === collectionProducts.length - 1 ? "pr-4 sm:pr-6 md:pr-8 lg:pr-0" : ""
+              }`}
             >
               <ProductCard product={product} showRating={false} />
             </div>

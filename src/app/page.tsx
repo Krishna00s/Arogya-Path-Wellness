@@ -11,7 +11,7 @@ import { HairCareCollection } from "@/components/home/HairCareCollection";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col w-full overflow-hidden pb-24 lg:pb-0">
+    <div className="flex flex-col w-full overflow-x-clip pb-24 lg:pb-0">
       {/* B. Promotional Hero Carousel (Touch swipe, ~5s auto-advance, dots) */}
       <HeroCarousel />
 

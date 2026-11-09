@@ -1,12 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AYURVEDIC_SOLUTION_TABS, SolutionTab } from "@/data/mock-categories";
 import { MOCK_PRODUCTS } from "@/data/mock-products";
 import { ProductCard } from "@/components/ui/ProductCard";
 
 export function AyurvedicSolutionTabs() {
   const [activeTab, setActiveTab] = useState<SolutionTab>(AYURVEDIC_SOLUTION_TABS[0]);
+
+  // Listen for tab switch events from SelectConcern, PopularCategories, or URL hash
+  useEffect(() => {
+    const handleCustomTab = (e: Event) => {
+      const customEvent = e as CustomEvent<{ slug?: string }>;
+      const slug = customEvent.detail?.slug;
+      if (!slug) return;
+
+      let key = slug;
+      if (slug === "mens-wellness") key = "mens-wellness";
+      else if (slug === "weight-gain" || slug === "weight-management") key = "weight-gain";
+      else if (slug === "immunity" || slug === "immunity-booster") key = "immunity";
+      else if (slug === "hair-care" || slug === "hair") key = "hair-care";
+      else if (slug === "digestive-wellness" || slug === "digestion") key = "digestion";
+
+      const matched = AYURVEDIC_SOLUTION_TABS.find((t) => t.concernKey === key);
+      if (matched) {
+        setActiveTab(matched);
+      }
+    };
+
+    window.addEventListener("switch-concern-tab", handleCustomTab);
+    return () => {
+      window.removeEventListener("switch-concern-tab", handleCustomTab);
+    };
+  }, []);
 
   // Filter products by active concern tab
   const filteredProducts = MOCK_PRODUCTS.filter(
@@ -37,7 +63,7 @@ export function AyurvedicSolutionTabs() {
 
         {/* Text Tabs with Active Underline */}
         <div className="border-b border-slate-200 mb-6 sm:mb-8">
-          <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-6 sm:gap-10 px-1">
+          <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar touch-scroll-x gap-6 sm:gap-10 px-1">
             {AYURVEDIC_SOLUTION_TABS.map((tab) => {
               const isActive = activeTab.id === tab.id;
               return (
@@ -45,7 +71,7 @@ export function AyurvedicSolutionTabs() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`relative pb-3 sm:pb-4 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors touch-target-44 ${
+                  className={`relative pb-3 sm:pb-4 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors touch-target-44 cursor-pointer ${
                     isActive
                       ? "text-[#355E2B] font-bold"
                       : "text-slate-500 hover:text-slate-800"
@@ -61,10 +87,15 @@ export function AyurvedicSolutionTabs() {
           </div>
         </div>
 
-        {/* 2-Column Mobile Product Grid (2 cols mobile, 3 tablet, 4 desktop) */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Product Grid Centered: Cards on middle of their width (justify-center & items-center) */}
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 max-w-[1440px] mx-auto">
           {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <div
+              key={product.id}
+              className="w-[calc(50%-8px)] sm:w-[calc(50%-12px)] md:w-[270px] lg:w-[290px] shrink-0 flex flex-col justify-between"
+            >
+              <ProductCard product={product} className="w-full" />
+            </div>
           ))}
         </div>
       </div>

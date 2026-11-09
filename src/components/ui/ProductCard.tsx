@@ -97,7 +97,7 @@ export function ProductCard({ product, className, showRating = true }: ProductCa
             type="button"
             onClick={handleAddToCartOnly}
             aria-label="Add item to cart"
-            className="h-10 sm:h-11 w-10 sm:w-12 bg-[#222222] hover:bg-black text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer"
+            className="h-10 sm:h-11 w-10 sm:w-12 bg-[#222222] hover:bg-[#3d3d3d] hover:brightness-110 text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer touch-manipulation"
           >
             {justAdded ? (
               <Check className="w-4.5 h-4.5 text-emerald-400 stroke-[2.5]" />
@@ -110,7 +110,7 @@ export function ProductCard({ product, className, showRating = true }: ProductCa
             type="button"
             onClick={handleBuyNow}
             aria-label="Buy product now"
-            className="flex-1 h-10 sm:h-11 bg-[#355E2B] hover:bg-[#2C4E24] text-white font-bold text-xs sm:text-sm tracking-wide uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer"
+            className="flex-1 h-10 sm:h-11 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-xs sm:text-sm tracking-wide uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation"
           >
             BUY NOW
           </button>
