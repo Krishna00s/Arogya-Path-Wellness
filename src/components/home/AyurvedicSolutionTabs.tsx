@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { AYURVEDIC_SOLUTION_TABS, SolutionTab } from "@/data/mock-categories";
-import { MOCK_PRODUCTS } from "@/data/mock-products";
+import { getAvailableProducts } from "@/data/mock-products";
 import { ProductCard } from "@/components/ui/ProductCard";
 
 const SLUG_TO_CONCERN_KEY: Record<string, SolutionTab["concernKey"]> = {
@@ -40,16 +40,17 @@ export function AyurvedicSolutionTabs() {
     };
   }, []);
 
-  // Filter products by active concern tab
-  const filteredProducts = MOCK_PRODUCTS.filter(
+  // Filter active products by active concern tab
+  const availableProducts = getAvailableProducts();
+  const filteredProducts = availableProducts.filter(
     (product) => product.concern === activeTab.concernKey
   );
 
-  // If a tab has fewer than 2 products, fallback to showing additional relevant products
+  // If a tab has fewer than 2 products, fallback to showing active products
   const displayProducts =
     filteredProducts.length > 0
       ? filteredProducts
-      : MOCK_PRODUCTS.slice(0, 4);
+      : availableProducts.slice(0, 4);
 
   return (
     <section

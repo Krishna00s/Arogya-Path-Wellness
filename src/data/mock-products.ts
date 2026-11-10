@@ -1,24 +1,29 @@
 import { Product } from "@/types/storefront";
+import { storefrontConfig } from "@/config/storefront";
 
 export const MOCK_PRODUCTS: Product[] = [
-  // 1. Featured Men's Wellness — Testo Booster Tablets (MANDATORY per instruction)
+  // 1. Featured Men's Wellness — Testo Natural Power+ (Launch Product)
   {
     id: "prod-testo-booster",
-    slug: "testo-booster-tablets",
-    name: "Testo Booster Tablets",
-    subtitle: "Natural Vigor, Stamina & Male Vitality",
-    packSize: "60 Tablets",
-    price: 699,
-    compareAtPrice: 1299,
-    discountPercent: 46,
+    slug: "testo-natural-power-plus",
+    name: "Testo Natural Power+",
+    brand: "Arogya Path",
+    subtitle: "30 Veg Capsules",
+    packSize: "30 Veg Capsules",
+    price: 859,
+    compareAtPrice: 1499,
+    discountPercent: 43,
     rating: 4.8,
     reviewCount: 384,
     categorySlug: "mens-wellness",
     concern: "mens-wellness",
-    image: "/prod-shilajit-gold.jpg",
+    image: "/arogya-path-testo-capsules-advertisement.png",
+    hoverImage: "/testo-natural-power-plus-product-portrait.png",
     badge: "Bestseller",
     inStock: true,
-    shortDescription: "Formulated with pure Shilajit, Safed Musli, Gokshura, and Ashwagandha to support stamina, vitality, and natural strength.",
+    status: "active",
+    shortDescription:
+      "30 Veg Capsules with Ayurvedic herbs supporting stamina, strength, energy, and men's wellness.",
     isDemo: true,
   },
 
@@ -39,6 +44,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-churna-jar.jpg",
     badge: "Popular Pick",
     inStock: true,
+    status: "draft",
     shortDescription: "Traditional blend of Haritaki, Saunf, and Ajwain for bloating relief and regular digestion.",
     isDemo: true,
   },
@@ -60,6 +66,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-ashwagandha.jpg",
     badge: "Top Rated",
     inStock: true,
+    status: "draft",
     shortDescription: "Formulated with pure Giloy, Ashwagandha, and Amla to build resilient natural immunity.",
     isDemo: true,
   },
@@ -81,6 +88,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-amla-mortar.jpg",
     badge: "Hair Care",
     inStock: true,
+    status: "draft",
     shortDescription: "Infused with Bhringraj, Amla, Brahmi, and Methi seed extracts for dense texture and root strength.",
     isDemo: true,
   },
@@ -101,6 +109,7 @@ export const MOCK_PRODUCTS: Product[] = [
     concern: "hair-care",
     image: "/prod-amla-mortar.jpg",
     inStock: true,
+    status: "draft",
     shortDescription: "Pure raw Shikakai powder for gentle, non-stripping cleansing and scalp health.",
     isDemo: true,
   },
@@ -121,6 +130,7 @@ export const MOCK_PRODUCTS: Product[] = [
     concern: "hair-care",
     image: "/prod-amla-mortar.jpg",
     inStock: true,
+    status: "draft",
     shortDescription: "Sun-dried wild Indian Gooseberry (Amalaki) powder rich in Vitamin C and antioxidants.",
     isDemo: true,
   },
@@ -141,6 +151,7 @@ export const MOCK_PRODUCTS: Product[] = [
     concern: "hair-care",
     image: "/prod-churna-jar.jpg",
     inStock: true,
+    status: "draft",
     shortDescription: "Natural soapnut powder for chemical-free hair washing and shine.",
     isDemo: true,
   },
@@ -161,6 +172,7 @@ export const MOCK_PRODUCTS: Product[] = [
     concern: "hair-care",
     image: "/prod-shilajit-gold.jpg",
     inStock: true,
+    status: "draft",
     shortDescription: "Infused with Red Onion seed oil and Plant Keratin to minimize hair breakage.",
     isDemo: true,
   },
@@ -182,6 +194,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-ashwagandha.jpg",
     badge: "Bestseller",
     inStock: true,
+    status: "draft",
     shortDescription: "Ayurvedic nutrition with Amalaki, Bhringraj, and Shankhpushpi to arrest hair fall from within.",
     isDemo: true,
   },
@@ -203,6 +216,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-triphala.jpg",
     badge: "Weight Gain",
     inStock: true,
+    status: "draft",
     shortDescription: "Classical Ayurvedic rasayana paste enriched with Shatavari, Gokshura, and raw honey for healthy weight gain.",
     isDemo: true,
   },
@@ -224,6 +238,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-turmeric.jpg",
     badge: "High Relief",
     inStock: true,
+    status: "draft",
     shortDescription: "Powered by Shallaki (Boswellia) and Shuddha Guggulu for joint comfort and stiffness relief.",
     isDemo: true,
   },
@@ -245,6 +260,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-shilajit-gold.jpg",
     badge: "Pure Resin",
     inStock: true,
+    status: "draft",
     shortDescription: "Sun-dried high altitude Himalayan Shilajit resin containing >75% fulvic acid for vigor and athletic stamina.",
     isDemo: true,
   },
@@ -266,6 +282,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-triphala.jpg",
     badge: "Daily Detox",
     inStock: true,
+    status: "draft",
     shortDescription: "Equal parts Amla, Haritaki, and Bibhitaki for natural digestive regularity and detoxification.",
     isDemo: true,
   },
@@ -287,6 +304,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-brahmi.jpg",
     badge: "Medhya Herb",
     inStock: true,
+    status: "draft",
     shortDescription: "Medhya herbs Brahmi, Shankhpushpi, and Jatamansi to calm anxiety and support memory.",
     isDemo: true,
   },
@@ -308,6 +326,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-triphala.jpg",
     badge: "Appetite Care",
     inStock: true,
+    status: "draft",
     shortDescription: "Ayurvedic digestive agni booster to increase nutrient assimilation and natural weight gain.",
     isDemo: true,
   },
@@ -329,7 +348,30 @@ export const MOCK_PRODUCTS: Product[] = [
     image: "/prod-turmeric.jpg",
     badge: "Pure Extract",
     inStock: true,
+    status: "draft",
     shortDescription: "Cold-extracted wild Tulsi and Guduchi for daily throat comfort and respiratory vitality.",
     isDemo: true,
   },
 ];
+
+export function isProductAvailable(product: Product): boolean {
+  if (product.status !== "active" || !product.inStock) {
+    return false;
+  }
+  if (storefrontConfig.launchMode === "single-product") {
+    return product.id === storefrontConfig.featuredProductId;
+  }
+  return true;
+}
+
+export function getAvailableProducts(): Product[] {
+  return MOCK_PRODUCTS.filter(isProductAvailable);
+}
+
+export function getFeaturedProduct(): Product | undefined {
+  const available = getAvailableProducts();
+  return (
+    available.find((p) => p.id === storefrontConfig.featuredProductId) ??
+    available[0]
+  );
+}

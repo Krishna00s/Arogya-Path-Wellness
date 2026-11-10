@@ -1,15 +1,18 @@
 import React from "react";
-import { MOCK_PRODUCTS } from "@/data/mock-products";
+import { getAvailableProducts } from "@/data/mock-products";
 import { ProductCard } from "@/components/ui/ProductCard";
 
 export function HairCareCollection() {
+  const availableProducts = getAvailableProducts();
   // Authentic Hair Care formulations matching AR Ayurveda reference sequence
   const collectionProducts = [
-    MOCK_PRODUCTS.find((p) => p.id === "prod-shikakai-powder"),
-    MOCK_PRODUCTS.find((p) => p.id === "prod-amla-powder"),
-    MOCK_PRODUCTS.find((p) => p.id === "prod-aritha-powder"),
-    MOCK_PRODUCTS.find((p) => p.id === "prod-onion-shampoo"),
+    availableProducts.find((p) => p.id === "prod-shikakai-powder"),
+    availableProducts.find((p) => p.id === "prod-amla-powder"),
+    availableProducts.find((p) => p.id === "prod-aritha-powder"),
+    availableProducts.find((p) => p.id === "prod-onion-shampoo"),
   ].filter((p): p is NonNullable<typeof p> => Boolean(p));
+
+  if (collectionProducts.length === 0) return null;
 
   return (
     <section id="hair-care" className="py-8 sm:py-12 bg-white w-full">

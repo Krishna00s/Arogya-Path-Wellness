@@ -141,18 +141,20 @@ export const CONCERN_OPTIONS: Array<{ id: string; label: string; concernKey: imp
   { id: "tab-hair", label: "Hair & Scalp", concernKey: "hair-care" },
 ];
 
-// 4. Watch & Shop Reels Data
+// 4. Watch & Shop Reels Data (Full catalog mode)
 export const WATCH_AND_SHOP_REELS: ReelItem[] = [
   {
     id: "reel-1",
-    title: "How to Take Shilajit for Max Stamina",
-    productName: "Testo Booster Tablets",
-    productPrice: 699,
-    posterImage: "/prod-shilajit-gold.jpg",
+    productId: "prod-testo-booster",
+    title: "Testo Natural Power+ Daily Wellness Routine",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    posterImage: "/arogya-path-testo-capsules-advertisement.png",
     videoDuration: "0:45",
   },
   {
     id: "reel-2",
+    productId: "prod-digest-zen",
     title: "1-Minute Gut Reset with Churna",
     productName: "Digest Zen Herbal Churna",
     productPrice: 549,
@@ -161,6 +163,7 @@ export const WATCH_AND_SHOP_REELS: ReelItem[] = [
   },
   {
     id: "reel-3",
+    productId: "prod-kesh-oil",
     title: "Ancient Scalp Massage for Thick Hair",
     productName: "Kesh Sanjeevani Hair Oil",
     productPrice: 499,
@@ -169,6 +172,7 @@ export const WATCH_AND_SHOP_REELS: ReelItem[] = [
   },
   {
     id: "reel-4",
+    productId: "prod-immuno-plus",
     title: "Daily Morning Kadha vs Capsules",
     productName: "Immuno Plus Tablets",
     productPrice: 599,
@@ -177,6 +181,7 @@ export const WATCH_AND_SHOP_REELS: ReelItem[] = [
   },
   {
     id: "reel-5",
+    productId: "prod-joint-ease",
     title: "Natural Joint Cartilage Flexibility",
     productName: "Joint Ease Mahanarayan Tabs",
     productPrice: 699,
@@ -185,11 +190,70 @@ export const WATCH_AND_SHOP_REELS: ReelItem[] = [
   },
   {
     id: "reel-6",
+    productId: "prod-triphala-tabs",
     title: "Ayurvedic Rasayana for Digestion",
     productName: "Triphala Rasayana Tablets",
     productPrice: 449,
     posterImage: "/prod-triphala.jpg",
     videoDuration: "0:56",
+  },
+];
+
+// Single-product launch mode Watch & Shop showcase (autoplaying vertical videos)
+export const SINGLE_PRODUCT_REELS: ReelItem[] = [
+  {
+    id: "launch-reel-1",
+    productId: "prod-testo-booster",
+    title: "Woman presenting wellness product",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-presenting-wellness-product.mp4",
+    likes: 15,
+  },
+  {
+    id: "launch-reel-2",
+    productId: "prod-testo-booster",
+    title: "Woman holding supplement product",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-holding-supplement-product.mp4",
+    likes: 24,
+  },
+  {
+    id: "launch-reel-3",
+    productId: "prod-testo-booster",
+    title: "Woman presenting supplement capsules",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-presenting-supplement-tablet.mp4",
+    likes: 19,
+  },
+  {
+    id: "launch-reel-4",
+    productId: "prod-testo-booster",
+    title: "Woman presents product advertisement",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-presents-product-advertise.mp4",
+    likes: 31,
+  },
+  {
+    id: "launch-reel-5",
+    productId: "prod-testo-booster",
+    title: "Woman speaking about stress",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-speaking-about-stress.mp4",
+    likes: 12,
+  },
+  {
+    id: "launch-reel-6",
+    productId: "prod-testo-booster",
+    title: "Woman explaining impact on marriage",
+    productName: "Testo Natural Power+",
+    productPrice: 859,
+    videoUrl: "/videos/woman-explaining-impact-on-marriage.mp4",
+    likes: 27,
   },
 ];
 

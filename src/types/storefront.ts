@@ -1,7 +1,10 @@
+export type ProductStatus = "active" | "draft" | "archived";
+
 export interface Product {
   id: string;
   slug: string;
   name: string;
+  brand?: string;
   subtitle?: string;
   packSize: string;
   price: number; // in Rupees
@@ -12,8 +15,10 @@ export interface Product {
   categorySlug: string;
   concern: "immunity" | "digestion" | "stress-sleep" | "hair-care" | "joint-care" | "mens-wellness" | "weight-gain" | "general-wellness" | "all";
   image: string;
+  hoverImage?: string;
   badge?: string;
   inStock: boolean;
+  status: ProductStatus;
   shortDescription: string;
   isDemo: true;
 }
@@ -39,12 +44,15 @@ export interface ConcernItem {
 
 export interface ReelItem {
   id: string;
+  productId?: string;
   title: string;
   productName: string;
   productPrice: number;
-  posterImage: string;
+  posterImage?: string;
+  videoUrl?: string;
   videoDuration?: string;
   productImage?: string;
+  likes?: number;
 }
 
 export interface Review {

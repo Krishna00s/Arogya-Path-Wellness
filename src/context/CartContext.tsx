@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { Product, CartItem } from "@/types/storefront";
-import { MOCK_PRODUCTS } from "@/data/mock-products";
+import { getAvailableProducts, isProductAvailable } from "@/data/mock-products";
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -22,15 +22,21 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with 1 demo product for visual presentation as requested in the reference UI
-  const [cartItems, setCartItems] = useState<CartItem[]>(() =>
-    MOCK_PRODUCTS.length > 0 ? [{ product: MOCK_PRODUCTS[0], quantity: 1 }] : []
-  );
+  // Initialize with 1 active featured product for storefront demonstration
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const availableProducts = getAvailableProducts();
+    return availableProducts.length > 0
+      ? [{ product: availableProducts[0], quantity: 1 }]
+      : [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const addToCart = useCallback((product: Product, quantity = 1) => {
+    if (!isProductAvailable(product)) {
+      return;
+    }
     setCartItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import { ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/types/storefront";
 import { RatingStars } from "./RatingStars";
+import { ProductImagePreview } from "./ProductImagePreview";
 import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
@@ -49,24 +49,17 @@ export function ProductCard({ product, className, showRating = true }: ProductCa
         className || ""
       }`}
     >
-      {/* 1. Product Image: 1:1 Aspect-Square, seamless white background, no border-radius */}
-      <div className="relative aspect-square w-full bg-white overflow-hidden">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
-          className="object-contain"
-          loading="lazy"
-        />
-
-        {/* Optional Pill Badge (bottom right, like Neelam Giri badge) */}
-        {product.badge && (
-          <span className="absolute bottom-2 right-2 text-[10px] sm:text-[11px] font-bold bg-[#C93B3B] text-white px-2 py-0.5 rounded-full shadow-2xs">
-            {product.badge}
-          </span>
-        )}
-      </div>
+      {/* 1. Product Image: 1:1 Aspect-Square, seamless white background, image-scoped hover/touch swap */}
+      <ProductImagePreview
+        src={product.image}
+        hoverSrc={product.hoverImage}
+        alt={product.name}
+        hoverAlt={`${product.name} alternate view`}
+        sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
+        badge={product.badge}
+        badgeClassName="bottom-2 right-2 text-[10px] sm:text-[11px] px-2 py-0.5"
+        loading="lazy"
+      />
 
       {/* 2. Product Info: clean sans-serif typography, no background box */}
       <div className="pt-2.5 sm:pt-3 flex flex-col flex-1 justify-between">

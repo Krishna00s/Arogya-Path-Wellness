@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatRupees } from "@/lib/utils";
+import { storefrontConfig } from "@/config/storefront";
+import { getAvailableProducts } from "@/data/mock-products";
 
 export function Header() {
   const {
@@ -69,11 +71,39 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const { sections, launchMode } = storefrontConfig;
+  const searchPlaceholder =
+    launchMode === "single-product"
+      ? "Search Testo Natural Power+..."
+      : "Search churna, tablets, oils, capsules...";
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      alert(`[SEARCH] Searching for "${searchQuery}". Catalog filtering will be connected in Milestone 2.`);
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return;
+
+    const availableProducts = getAvailableProducts();
+    const matches = availableProducts.filter((p) =>
+      [p.name, p.brand, p.packSize, p.subtitle, p.shortDescription]
+        .filter(Boolean)
+        .some((field) => field!.toLowerCase().includes(query))
+    );
+
+    if (matches.length > 0) {
+      setIsSearchOpen(false);
+      const el = document.getElementById("best-solutions");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      return;
     }
+
+    const activeSummary = availableProducts
+      .map((p) => `${p.name} (${p.packSize})`)
+      .join(", ");
+    alert(
+      `[SEARCH] No available products matched "${searchQuery.trim()}".\nCurrently available: ${
+        activeSummary || "None"
+      }`
+    );
   };
 
   return (
@@ -145,7 +175,7 @@ export function Header() {
           {/* Desktop Brand Logo */}
           <Link
             href="/"
-            className="flex items-center focus:outline-none shrink-0 group"
+            className="flex items-center focus:outline-none shrink-0"
           >
             <Image
               src="/logo.png"
@@ -153,7 +183,7 @@ export function Header() {
               width={160}
               height={80}
               priority
-              className="h-[68px] sm:h-[76px] w-auto object-contain transition-transform group-hover:scale-102"
+              className="h-[68px] sm:h-[76px] w-auto object-contain"
             />
           </Link>
 
@@ -164,7 +194,7 @@ export function Header() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search churna, tablets, oils, capsules..."
+                placeholder={searchPlaceholder}
                 className="w-full pl-12 pr-28 py-2.5 sm:py-3 bg-[#F1F5F4] border border-slate-200 rounded-full text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0B4B39] focus:bg-white transition-all shadow-2xs"
               />
               <Search className="w-5 h-5 text-slate-400 absolute left-4.5 top-1/2 -translate-y-1/2" />
@@ -230,52 +260,64 @@ export function Header() {
             >
               Home
             </Link>
-            <a
-              href="#concern"
-              className="flex items-center gap-1.5 hover:text-[#0B4B39] transition-colors"
-            >
-              <span>Shop by Concern</span>
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            </a>
-            <a
-              href="#best-solutions"
-              className="hover:text-[#0B4B39] transition-colors"
-            >
-              Best Solutions
-            </a>
-            <a
-              href="#popular-categories"
-              className="flex items-center gap-1.5 hover:text-[#0B4B39] transition-colors"
-            >
-              <span>Popular Categories</span>
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            </a>
-            <a
-              href="#ayurvedic-solutions"
-              className="hover:text-[#0B4B39] transition-colors"
-            >
-              Ayurvedic Solutions
-            </a>
-            <a
-              href="#hair-care"
-              className="hover:text-[#0B4B39] transition-colors"
-            >
-              Hair Care
-            </a>
+            {sections.selectConcern && (
+              <a
+                href="#concern"
+                className="flex items-center gap-1.5 hover:text-[#0B4B39] transition-colors"
+              >
+                <span>Shop by Concern</span>
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              </a>
+            )}
+            {sections.bestSolutions && (
+              <a
+                href="#best-solutions"
+                className="hover:text-[#0B4B39] transition-colors"
+              >
+                {launchMode === "single-product" ? "Featured Product" : "Best Solutions"}
+              </a>
+            )}
+            {sections.popularCategories && (
+              <a
+                href="#popular-categories"
+                className="flex items-center gap-1.5 hover:text-[#0B4B39] transition-colors"
+              >
+                <span>Popular Categories</span>
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              </a>
+            )}
+            {sections.ayurvedicSolutions && (
+              <a
+                href="#ayurvedic-solutions"
+                className="hover:text-[#0B4B39] transition-colors"
+              >
+                Ayurvedic Solutions
+              </a>
+            )}
+            {sections.hairCareCollection && (
+              <a
+                href="#hair-care"
+                className="hover:text-[#0B4B39] transition-colors"
+              >
+                Hair Care
+              </a>
+            )}
           </div>
 
           <div className="flex items-center gap-6 text-slate-600 font-semibold text-xs sm:text-sm">
-            <button
-              type="button"
-              onClick={() =>
-                alert(
-                  "[REVIEWS] Verified customer reviews & feedback will be connected in Milestone 2."
-                )
-              }
-              className="hover:text-[#0B4B39] transition-colors cursor-pointer"
-            >
-              Customer Reviews
-            </button>
+            {sections.reviews && (
+              <button
+                type="button"
+                onClick={() =>
+                  alert(
+                    "[REVIEWS] Verified customer reviews & feedback will be connected in Milestone 2."
+                  )
+                }
+                className="hover:text-[#0B4B39] transition-colors cursor-pointer"
+              >
+                Customer Reviews
+              </button>
+            )}
             <a
               href="#footer"
               className="hover:text-[#0B4B39] transition-colors"
@@ -299,7 +341,7 @@ export function Header() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search churna, tablets, oils, shilajit..."
+              placeholder={searchPlaceholder}
               className="w-full pl-11 pr-22 py-2.5 bg-white border border-slate-300 rounded-full text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0B4B39]"
               autoFocus
             />

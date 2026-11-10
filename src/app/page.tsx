@@ -8,36 +8,39 @@ import { MovingTicker } from "@/components/home/MovingTicker";
 import { AyurvedicSolutionTabs } from "@/components/home/AyurvedicSolutionTabs";
 import { CampaignTrustBanner } from "@/components/home/CampaignTrustBanner";
 import { HairCareCollection } from "@/components/home/HairCareCollection";
+import { storefrontConfig } from "@/config/storefront";
 
 export default function HomePage() {
+  const { sections } = storefrontConfig;
+
   return (
     <div className="flex flex-col w-full overflow-x-clip pb-24 lg:pb-0">
-      {/* B. Promotional Hero Carousel (Touch swipe, ~5s auto-advance, dots) */}
-      <HeroCarousel />
+      {/* Promotional Hero Carousel */}
+      {sections.hero && <HeroCarousel />}
 
-      {/* C. Select Your Concern (Circular image tiles, horizontal scroll) */}
-      <SelectConcern />
+      {/* Select Your Concern (Hidden in single-product launch mode) */}
+      {sections.selectConcern && <SelectConcern />}
 
-      {/* D. I'm Looking for the Best Solution (~2 visible cards mobile, Testo Booster Tablets first) */}
-      <BestSolutionsCarousel />
+      {/* Best Solutions / Featured Product Showcase */}
+      {sections.bestSolutions && <BestSolutionsCarousel />}
 
-      {/* E. Watch & Shop (2 portrait 9:16 reels side-by-side, video modal) */}
-      <WatchAndShop />
+      {/* Watch & Shop (Hidden in single-product launch mode) */}
+      {sections.watchAndShop && <WatchAndShop />}
 
-      {/* F. Our Most Popular Categories (Horizontal carousel with subtitle & prev/next arrows) */}
-      <PopularCategories />
+      {/* Our Most Popular Categories (Hidden in single-product launch mode) */}
+      {sections.popularCategories && <PopularCategories />}
 
-      {/* G. Continuous Moving Strip (Marquee ticker with key value props) */}
-      <MovingTicker />
+      {/* Continuous Moving Trust Strip */}
+      {sections.movingTicker && <MovingTicker />}
 
-      {/* H. Ayurvedic Solution (Text tabs with active underline, 2-column mobile product grid) */}
-      <AyurvedicSolutionTabs />
+      {/* Ayurvedic Solution Tabs (Hidden in single-product launch mode) */}
+      {sections.ayurvedicSolutions && <AyurvedicSolutionTabs />}
 
-      {/* I. Trust & Promotional Campaign Banner ("Wellness Rooted in Ayurveda") */}
-      <CampaignTrustBanner />
+      {/* Trust & Promotional Campaign Banner */}
+      {sections.campaignTrustBanner && <CampaignTrustBanner />}
 
-      {/* J. Hair Care Collection (Horizontal scrollable collection) */}
-      <HairCareCollection />
+      {/* Hair Care Collection (Hidden in single-product launch mode) */}
+      {sections.hairCareCollection && <HairCareCollection />}
     </div>
   );
 }

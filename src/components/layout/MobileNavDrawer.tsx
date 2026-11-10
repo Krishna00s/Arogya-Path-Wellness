@@ -6,6 +6,7 @@ import Image from "next/image";
 import { X, ChevronRight, Mail, MapPin } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { MOCK_CATEGORIES } from "@/data/mock-categories";
+import { storefrontConfig } from "@/config/storefront";
 import { navigateToConcern } from "@/lib/utils";
 
 export function MobileNavDrawer() {
@@ -36,6 +37,10 @@ export function MobileNavDrawer() {
     setIsMobileNavOpen(false);
     navigateToConcern(slug);
   };
+
+  const { sections, launchMode } = storefrontConfig;
+  const showCategoryBrowse =
+    launchMode === "full" && (sections.selectConcern || sections.ayurvedicSolutions);
 
   return (
     <div
@@ -93,70 +98,92 @@ export function MobileNavDrawer() {
                 <span>Store Homepage</span>
                 <ChevronRight className="w-4 h-4 text-[#0B4B39]" />
               </Link>
+              {sections.selectConcern && (
+                <a
+                  href="#concern"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <span>Select Your Concern</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              )}
+              {sections.bestSolutions && (
+                <a
+                  href="#best-solutions"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <span>
+                    {launchMode === "single-product" ? "Featured Product" : "Best Solutions"}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              )}
+              {sections.popularCategories && (
+                <a
+                  href="#popular-categories"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <span>Popular Categories</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              )}
+              {sections.ayurvedicSolutions && (
+                <a
+                  href="#ayurvedic-solutions"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <span>Ayurvedic Solutions</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              )}
+              {sections.hairCareCollection && (
+                <a
+                  href="#hair-care"
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <span>Hair Care Collection</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              )}
               <a
-                href="#concern"
+                href="#footer"
                 onClick={() => setIsMobileNavOpen(false)}
                 className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
               >
-                <span>Select Your Concern</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
-              </a>
-              <a
-                href="#best-solutions"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <span>Best Solutions</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
-              </a>
-              <a
-                href="#popular-categories"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <span>Popular Categories</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
-              </a>
-              <a
-                href="#ayurvedic-solutions"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <span>Ayurvedic Solutions</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
-              </a>
-              <a
-                href="#hair-care"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                <span>Hair Care Collection</span>
+                <span>About &amp; Contact</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </a>
             </div>
           </div>
 
-          {/* Categories Grid */}
-          <div>
-            <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
-              Shop By Concern
-            </h4>
-            <div className="space-y-1">
-              {MOCK_CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => handleCategoryNav(cat.slug)}
-                  className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs text-slate-700 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors text-left cursor-pointer"
-                >
-                  <span className="font-semibold">{cat.name}</span>
-                  <span className="text-[10px] text-slate-400">
-                    {cat.itemCount} items
-                  </span>
-                </button>
-              ))}
+          {/* Categories Grid (shown only when multi-category browsing is enabled) */}
+          {showCategoryBrowse && (
+            <div>
+              <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                Shop By Concern
+              </h4>
+              <div className="space-y-1">
+                {MOCK_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => handleCategoryNav(cat.slug)}
+                    className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs text-slate-700 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors text-left cursor-pointer"
+                  >
+                    <span className="font-semibold">{cat.name}</span>
+                    <span className="text-[10px] text-slate-400">
+                      {cat.itemCount} items
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Help & Policies */}
           <div className="pt-4 border-t border-slate-100">

@@ -28,7 +28,7 @@ export function SelectConcern() {
               className="w-[215px] sm:w-[245px] md:w-[275px] lg:w-full shrink-0 lg:shrink snap-start flex flex-col items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] focus-visible:ring-offset-2 rounded-2xl cursor-pointer box-content first:pl-4 sm:first:pl-6 md:first:pl-8 lg:first:pl-0 last:pr-4 sm:last:pr-6 md:last:pr-8 lg:last:pr-0 lg:box-border touch-manipulation select-none"
             >
               {/* Clean Large Circular Photographic Portrait Crop */}
-              <div className="w-[215px] h-[215px] sm:w-[245px] sm:h-[245px] md:w-[275px] md:h-[275px] lg:w-[180px] lg:h-[180px] xl:w-[200px] xl:h-[200px] 2xl:w-[220px] 2xl:h-[220px] rounded-full overflow-hidden relative shadow-none border-0 bg-slate-100 transition-transform duration-300 group-hover:scale-105 pointer-events-none">
+              <div className="w-[215px] h-[215px] sm:w-[245px] sm:h-[245px] md:w-[275px] md:h-[275px] lg:w-[180px] lg:h-[180px] xl:w-[200px] xl:h-[200px] 2xl:w-[220px] 2xl:h-[220px] rounded-full overflow-hidden relative shadow-none border-0 bg-slate-100 pointer-events-none">
                 <Image
                   src={concern.image}
                   alt={concern.label}

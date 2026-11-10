@@ -35,28 +35,28 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10">
           {/* Column 1: Brand Info & Description */}
           <div id="about" className="space-y-4">
-            <Link href="/" className="inline-block group focus:outline-none mb-1">
+            <Link href="/" className="inline-block focus:outline-none mb-1">
               <Image
                 src="/logo.png"
                 alt="Arogya Path - The Path to Wellness"
-                width={150}
-                height={75}
-                className="h-[60px] sm:h-[66px] w-auto object-contain transition-transform group-hover:scale-102"
+                width={220}
+                height={165}
+                className="h-[80px] sm:h-[92px] md:h-[98px] w-auto object-contain"
               />
             </Link>
 
-            <p className="text-xs sm:text-[13px] text-[#444444] leading-relaxed max-w-sm">
+            <p className="text-[15px] sm:text-base md:text-[17px] font-medium text-[#2e3a2d] leading-relaxed max-w-sm">
               Discover natural healing with Ayurveda—herbal remedies, wellness tips, and holistic care for a balanced and healthy lifestyle.
             </p>
 
-            <div className="space-y-1 text-xs sm:text-[13px] font-medium text-[#222222] pt-1">
+            <div className="space-y-1.5 text-sm sm:text-[15px] font-semibold text-[#1f2937] pt-1">
               <div>
-                <a href="tel:+919693801174" className="hover:text-[#0B4B39] transition-colors font-semibold">
+                <a href="tel:+919693801174" className="footer-link font-bold">
                   +91 9693801174
                 </a>
               </div>
               <div>
-                <a href="mailto:info@arogyapathwellness.com" className="hover:text-[#0B4B39] transition-colors">
+                <a href="mailto:info@arogyapathwellness.com" className="footer-link">
                   info@arogyapathwellness.com
                 </a>
               </div>
@@ -68,7 +68,7 @@ export function Footer() {
             <button
               type="button"
               onClick={() => setIsServicesOpen(!isServicesOpen)}
-              className="flex items-center justify-between w-full min-h-[44px] text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-md"
+              className="flex items-center justify-between w-full min-h-[44px] lg:min-h-0 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-md"
               aria-expanded={isServicesOpen}
               aria-controls="footer-services-menu"
             >
@@ -89,31 +89,31 @@ export function Footer() {
                 isServicesOpen ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible"
               }`}
             >
-              <ul className="space-y-2 text-xs sm:text-[13px] text-[#444444] pt-1">
+              <ul className="space-y-2.5 text-sm sm:text-[15px] font-medium text-[#2e3a2d] py-1">
                 <li>
-                  <Link href="/" className="hover:text-[#0B4B39] transition-colors">
+                  <Link href="/" className="footer-link">
                     Home
                   </Link>
                 </li>
                 <li>
-                  <a href="#best-solutions" className="hover:text-[#0B4B39] transition-colors">
+                  <a href="#best-solutions" className="footer-link">
                     Products
                   </a>
                 </li>
                 <li>
-                  <a href="#contact" className="hover:text-[#0B4B39] transition-colors">
+                  <a href="#contact" className="footer-link">
                     Contact
                   </a>
                 </li>
                 <li>
-                  <a href="#about" className="hover:text-[#0B4B39] transition-colors">
+                  <a href="#about" className="footer-link">
                     About Us
                   </a>
                 </li>
                 <li>
                   <button
                     type="button"
-                    className="hover:text-[#0B4B39] transition-colors cursor-pointer"
+                    className="footer-link cursor-pointer"
                     onClick={() => alert("[BLOGS] Ayurvedic wellness articles & guides coming soon!")}
                   >
                     Blogs
@@ -122,7 +122,7 @@ export function Footer() {
                 <li>
                   <button
                     type="button"
-                    className="hover:text-[#0B4B39] transition-colors cursor-pointer"
+                    className="footer-link cursor-pointer"
                     onClick={() => alert("[APP] Arogya Path mobile app coming soon to Google Play & Apple App Store!")}
                   >
                     Get App
@@ -137,11 +137,11 @@ export function Footer() {
             <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#1a2c16]">
               TERMS
             </h3>
-            <ul className="space-y-2 text-xs sm:text-[13px] text-[#444444]">
+            <ul className="space-y-2.5 text-sm sm:text-[15px] font-medium text-[#2e3a2d]">
               <li>
                 <button
                   type="button"
-                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  className="footer-link cursor-pointer text-left"
                   onClick={() => alert("[DEMO POLICY] Shipping Policy: Free dispatch across India for orders above ₹499.")}
                 >
                   Shipping Policy
@@ -150,7 +150,7 @@ export function Footer() {
               <li>
                 <button
                   type="button"
-                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  className="footer-link cursor-pointer text-left"
                   onClick={() => alert("[DEMO POLICY] Privacy Policy: Customer data is confidential and protected under Indian IT rules.")}
                 >
                   Privacy Policy
@@ -159,7 +159,7 @@ export function Footer() {
               <li>
                 <button
                   type="button"
-                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  className="footer-link cursor-pointer text-left"
                   onClick={() => alert("[DEMO POLICY] Return & Refund: 7-day verified return process on sealed Ayurvedic products.")}
                 >
                   Return and Refund Policy
@@ -168,7 +168,7 @@ export function Footer() {
               <li>
                 <button
                   type="button"
-                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  className="footer-link cursor-pointer text-left"
                   onClick={() => alert("[DEMO POLICY] Terms & Conditions: Governed under the laws of India. Operated by Arogya Path Marketing.")}
                 >
                   Terms and conditions
@@ -177,7 +177,7 @@ export function Footer() {
               <li>
                 <button
                   type="button"
-                  className="hover:text-[#0B4B39] cursor-pointer transition-colors text-left"
+                  className="footer-link cursor-pointer text-left"
                   onClick={() => alert("[CONTACT] Customer Care: Mon – Sat, 9am – 6pm. Call: +91 9693801174")}
                 >
                   Contact Us
@@ -191,15 +191,15 @@ export function Footer() {
             <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#1a2c16]">
               ADDRESS
             </h3>
-            <div className="space-y-2 text-xs sm:text-[13px] text-[#444444] leading-relaxed">
-              <div className="font-bold text-[#222222]">
+            <div className="space-y-2 text-sm sm:text-[15px] font-medium text-[#2e3a2d] leading-relaxed">
+              <div className="font-bold text-[#1f2937]">
                 Arogya Path Marketing
               </div>
               <div>
                 Ward No. 16, Ashok Nagar, Barwa Toli, Lohardaga, Jharkhand - 835302
               </div>
-              <div className="pt-1 font-semibold text-[#222222]">
-                <a href="tel:+919693801174" className="hover:text-[#0B4B39] transition-colors">
+              <div className="pt-1 font-bold text-[#1f2937]">
+                <a href="tel:+919693801174" className="footer-link">
                   +91 9693801174
                 </a>
               </div>

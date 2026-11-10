@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Home, LayoutGrid, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { storefrontConfig } from "@/config/storefront";
 
 export function MobileBottomNav() {
   const { totalItems, setIsCartOpen, setIsMobileNavOpen } = useCart();
@@ -25,7 +26,7 @@ export function MobileBottomNav() {
           </span>
         </Link>
 
-        {/* Categories */}
+        {/* Menu / Categories */}
         <button
           type="button"
           onClick={() => setIsMobileNavOpen(true)}
@@ -33,7 +34,7 @@ export function MobileBottomNav() {
         >
           <LayoutGrid className="w-6 h-6 stroke-[2]" />
           <span className="text-[11px] font-bold mt-0.5 tracking-tight">
-            Categories
+            {storefrontConfig.launchMode === "single-product" ? "Menu" : "Categories"}
           </span>
         </button>
 
