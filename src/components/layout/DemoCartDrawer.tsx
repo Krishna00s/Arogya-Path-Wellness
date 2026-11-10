@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   X,
@@ -29,6 +29,25 @@ export function DemoCartDrawer() {
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
 
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsCartOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isCartOpen, setIsCartOpen]);
+
   if (!isCartOpen) return null;
 
   const freeShippingThreshold = 499;
@@ -52,7 +71,12 @@ export function DemoCartDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Shopping cart"
+      className="fixed inset-0 z-50 flex justify-end"
+    >
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
@@ -60,7 +84,7 @@ export function DemoCartDrawer() {
       />
 
       {/* Drawer */}
-      <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-250">
+      <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col z-10">
         {/* Header */}
         <div className="p-4 border-b border-slate-200/80 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
@@ -74,7 +98,7 @@ export function DemoCartDrawer() {
             type="button"
             onClick={() => setIsCartOpen(false)}
             aria-label="Close cart"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            className="w-11 h-11 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
           >
             <X className="w-5 h-5" />
           </button>

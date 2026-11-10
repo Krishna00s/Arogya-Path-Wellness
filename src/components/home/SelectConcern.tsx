@@ -1,47 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import { CONCERN_CATEGORIES } from "@/data/mock-categories";
+import { navigateToConcern } from "@/lib/utils";
 
 export function SelectConcern() {
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleScroll = () => {
-    isScrollingRef.current = true;
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 150);
-  };
-
-  const handleSelectConcern = (slug?: string) => {
-    // If the user was scrolling or swiping horizontally, do NOT trigger section jump
-    if (!slug || isScrollingRef.current) return;
-
-    if (slug === "hair-care") {
-      const el = document.getElementById("hair-care");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
-      window.dispatchEvent(
-        new CustomEvent("switch-concern-tab", { detail: { slug: "hair-care" } })
-      );
-      return;
-    }
-
-    // Dispatch event to activate matching tab in AyurvedicSolutionTabs
-    window.dispatchEvent(
-      new CustomEvent("switch-concern-tab", { detail: { slug } })
-    );
-
-    const el = document.getElementById("ayurvedic-solutions");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <section id="concern" className="py-12 sm:py-16 md:py-20 bg-white w-full">
       {/* Centered Section Heading (Enlarged and with generous spacing) */}
@@ -54,15 +18,14 @@ export function SelectConcern() {
       {/* Horizontally scrollable row on mobile with enlarged portraits: full width edge-to-edge */}
       <div className="w-full lg:max-w-[1720px] lg:mx-auto">
         <div
-          onScroll={handleScroll}
-          className="flex lg:grid lg:grid-cols-5 gap-5 sm:gap-7 lg:gap-x-10 lg:gap-y-14 xl:gap-x-12 xl:gap-y-16 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-6 pt-1 lg:pb-0"
+          className="flex lg:grid lg:grid-cols-5 gap-5 sm:gap-7 lg:gap-x-10 lg:gap-y-14 xl:gap-x-12 xl:gap-y-16 overflow-x-auto lg:overflow-visible no-scrollbar overscroll-x-contain snap-x snap-mandatory px-0 lg:px-12 pb-6 pt-1 lg:pb-0"
         >
           {CONCERN_CATEGORIES.map((concern) => (
             <button
               key={concern.id}
               type="button"
-              onClick={() => handleSelectConcern(concern.slug)}
-              className="w-[215px] sm:w-[245px] md:w-[275px] lg:w-full shrink-0 lg:shrink snap-start flex flex-col items-center group focus:outline-none cursor-pointer box-content first:pl-4 sm:first:pl-6 md:first:pl-8 lg:first:pl-0 last:pr-4 sm:last:pr-6 md:last:pr-8 lg:last:pr-0 lg:box-border touch-manipulation select-none"
+              onClick={() => navigateToConcern(concern.slug)}
+              className="w-[215px] sm:w-[245px] md:w-[275px] lg:w-full shrink-0 lg:shrink snap-start flex flex-col items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] focus-visible:ring-offset-2 rounded-2xl cursor-pointer box-content first:pl-4 sm:first:pl-6 md:first:pl-8 lg:first:pl-0 last:pr-4 sm:last:pr-6 md:last:pr-8 lg:last:pr-0 lg:box-border touch-manipulation select-none"
             >
               {/* Clean Large Circular Photographic Portrait Crop */}
               <div className="w-[215px] h-[215px] sm:w-[245px] sm:h-[245px] md:w-[275px] md:h-[275px] lg:w-[180px] lg:h-[180px] xl:w-[200px] xl:h-[200px] 2xl:w-[220px] 2xl:h-[220px] rounded-full overflow-hidden relative shadow-none border-0 bg-slate-100 transition-transform duration-300 group-hover:scale-105 pointer-events-none">

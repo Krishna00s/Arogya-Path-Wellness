@@ -5,23 +5,29 @@ import { AYURVEDIC_SOLUTION_TABS, SolutionTab } from "@/data/mock-categories";
 import { MOCK_PRODUCTS } from "@/data/mock-products";
 import { ProductCard } from "@/components/ui/ProductCard";
 
+const SLUG_TO_CONCERN_KEY: Record<string, SolutionTab["concernKey"]> = {
+  "mens-wellness": "mens-wellness",
+  "weight-gain": "weight-gain",
+  "weight-management": "weight-gain",
+  immunity: "immunity",
+  "immunity-booster": "immunity",
+  "hair-care": "hair-care",
+  hair: "hair-care",
+  "digestive-wellness": "digestion",
+  digestion: "digestion",
+};
+
 export function AyurvedicSolutionTabs() {
   const [activeTab, setActiveTab] = useState<SolutionTab>(AYURVEDIC_SOLUTION_TABS[0]);
 
-  // Listen for tab switch events from SelectConcern, PopularCategories, or URL hash
+  // Listen for tab switch events from SelectConcern, PopularCategories, or navigation controls
   useEffect(() => {
     const handleCustomTab = (e: Event) => {
       const customEvent = e as CustomEvent<{ slug?: string }>;
       const slug = customEvent.detail?.slug;
       if (!slug) return;
 
-      let key = slug;
-      if (slug === "mens-wellness") key = "mens-wellness";
-      else if (slug === "weight-gain" || slug === "weight-management") key = "weight-gain";
-      else if (slug === "immunity" || slug === "immunity-booster") key = "immunity";
-      else if (slug === "hair-care" || slug === "hair") key = "hair-care";
-      else if (slug === "digestive-wellness" || slug === "digestion") key = "digestion";
-
+      const key = SLUG_TO_CONCERN_KEY[slug] ?? slug;
       const matched = AYURVEDIC_SOLUTION_TABS.find((t) => t.concernKey === key);
       if (matched) {
         setActiveTab(matched);
@@ -63,15 +69,21 @@ export function AyurvedicSolutionTabs() {
 
         {/* Text Tabs with Active Underline */}
         <div className="border-b border-slate-200 mb-6 sm:mb-8">
-          <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar touch-scroll-x gap-6 sm:gap-10 px-1">
+          <div
+            role="tablist"
+            aria-label="Health concerns"
+            className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar overscroll-x-contain gap-6 sm:gap-10 px-1"
+          >
             {AYURVEDIC_SOLUTION_TABS.map((tab) => {
               const isActive = activeTab.id === tab.id;
               return (
                 <button
                   key={tab.id}
                   type="button"
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => setActiveTab(tab)}
-                  className={`relative pb-3 sm:pb-4 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors touch-target-44 cursor-pointer ${
+                  className={`relative min-h-[44px] inline-flex items-center pb-3 sm:pb-4 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors cursor-pointer focus:outline-none focus-visible:text-[#355E2B] ${
                     isActive
                       ? "text-[#355E2B] font-bold"
                       : "text-slate-500 hover:text-slate-800"
@@ -87,8 +99,8 @@ export function AyurvedicSolutionTabs() {
           </div>
         </div>
 
-        {/* Product Grid Centered: Cards on middle of their width (justify-center & items-center) */}
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 max-w-[1440px] mx-auto">
+        {/* Product Grid Centered: Cards on middle of their width */}
+        <div className="flex flex-wrap items-stretch justify-center gap-4 sm:gap-6 max-w-[1440px] mx-auto">
           {displayProducts.map((product) => (
             <div
               key={product.id}

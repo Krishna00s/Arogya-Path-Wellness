@@ -1,19 +1,15 @@
-"use client";
-
-import React, { useRef } from "react";
+import React from "react";
 import { MOCK_PRODUCTS } from "@/data/mock-products";
 import { ProductCard } from "@/components/ui/ProductCard";
 
 export function HairCareCollection() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
   // Authentic Hair Care formulations matching AR Ayurveda reference sequence
   const collectionProducts = [
-    MOCK_PRODUCTS.find((p) => p.id === "prod-shikakai-powder")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-amla-powder")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-aritha-powder")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-onion-shampoo")!,
-  ].filter(Boolean);
+    MOCK_PRODUCTS.find((p) => p.id === "prod-shikakai-powder"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-amla-powder"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-aritha-powder"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-onion-shampoo"),
+  ].filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
     <section id="hair-care" className="py-8 sm:py-12 bg-white w-full">
@@ -32,8 +28,7 @@ export function HairCareCollection() {
       {/* Horizontal Carousel on Mobile, 4-Column Grid on Larger Screens: full width edge-to-edge */}
       <div className="w-full lg:max-w-[1720px] lg:mx-auto">
         <div
-          ref={scrollContainerRef}
-          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible no-scrollbar scroll-smooth snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-3 lg:pb-0"
+          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto lg:overflow-visible no-scrollbar overscroll-x-contain snap-x snap-mandatory px-0 lg:px-12 pb-3 lg:pb-0"
         >
           {collectionProducts.map((product, idx) => (
             <div

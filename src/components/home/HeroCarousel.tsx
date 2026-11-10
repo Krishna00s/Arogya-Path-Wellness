@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import { navigateToConcern } from "@/lib/utils";
 
 interface HeroSlide {
   id: string;
@@ -41,10 +42,28 @@ export function HeroCarousel() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const programmaticTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isProgrammaticScroll = useRef(false);
   const total = HERO_SLIDES.length;
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const handleScrollEnd = () => {
+      isProgrammaticScroll.current = false;
+      if (programmaticTimeoutRef.current) {
+        clearTimeout(programmaticTimeoutRef.current);
+        programmaticTimeoutRef.current = null;
+      }
+    };
+
+    container?.addEventListener("scrollend", handleScrollEnd);
+    return () => {
+      container?.removeEventListener("scrollend", handleScrollEnd);
+      if (programmaticTimeoutRef.current) {
+        clearTimeout(programmaticTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const scrollToSlide = useCallback(
     (index: number) => {
@@ -52,6 +71,10 @@ export function HeroCarousel() {
       if (!container) return;
       const targetIndex = (index + total) % total;
       const slideWidth = container.clientWidth;
+
+      if (programmaticTimeoutRef.current) {
+        clearTimeout(programmaticTimeoutRef.current);
+      }
       isProgrammaticScroll.current = true;
       container.scrollTo({
         left: targetIndex * slideWidth,
@@ -59,9 +82,10 @@ export function HeroCarousel() {
       });
       setCurrent(targetIndex);
 
-      setTimeout(() => {
+      programmaticTimeoutRef.current = setTimeout(() => {
         isProgrammaticScroll.current = false;
-      }, 400);
+        programmaticTimeoutRef.current = null;
+      }, 650);
     },
     [total]
   );
@@ -76,12 +100,6 @@ export function HeroCarousel() {
 
   // Synchronize active dot with user's native swipe gestures
   const handleScroll = () => {
-    isScrollingRef.current = true;
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 150);
-
     if (isProgrammaticScroll.current) return;
 
     const container = scrollContainerRef.current;
@@ -95,7 +113,7 @@ export function HeroCarousel() {
     }
   };
 
-  // Automatic slide rotation approximately every 5 seconds, respect pause
+  // Automatic slide rotation every 5 seconds, respect pause
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
@@ -105,39 +123,46 @@ export function HeroCarousel() {
   }, [isPaused, nextSlide]);
 
   const handleSlideClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // If user was swiping, suppress accidental click navigation
-    if (isScrollingRef.current) {
+    // Intentional tap switches to Men's Wellness and scrolls to featured products
+    if (navigateToConcern("mens-wellness", "best-solutions")) {
       e.preventDefault();
-      e.stopPropagation();
-      return;
     }
-    // Intentional tap switches to Men's Wellness and scrolls to products
-    window.dispatchEvent(
-      new CustomEvent("switch-concern-tab", { detail: { slug: "mens-wellness" } })
-    );
-    const el = document.getElementById("best-solutions");
-    if (el) {
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "ArrowLeft") {
       e.preventDefault();
-      el.scrollIntoView({ behavior: "smooth" });
+      prevSlide();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      nextSlide();
     }
   };
 
   return (
     <section
+      role="region"
+      aria-roledescription="carousel"
       aria-label="Promotional campaign hero carousel"
       className="relative w-full overflow-hidden select-none bg-white"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") setIsPaused(true);
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType === "mouse") setIsPaused(false);
+      }}
       onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => setIsPaused(false)}
+      onTouchCancel={() => setIsPaused(false)}
+      onKeyDown={handleKeyDown}
     >
-      {/* Relative wrapper holding both scroll container and overlay arrow buttons */}
+      {/* Promotional slide track wrapper */}
       <div className="relative w-full aspect-[1199/1312] sm:aspect-square md:aspect-[1254/900] md:max-h-[620px] lg:max-h-[660px] mx-auto bg-[#FAF7F2]">
         {/* Hardware-accelerated horizontal scroll-snap track */}
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="w-full h-full flex overflow-x-auto overflow-y-hidden no-scrollbar snap-x snap-mandatory touch-scroll-x"
+          className="w-full h-full flex overflow-x-auto overflow-y-hidden no-scrollbar overscroll-x-contain snap-x snap-mandatory"
         >
           {HERO_SLIDES.map((slide, idx) => (
             <div
@@ -148,7 +173,7 @@ export function HeroCarousel() {
                 href={slide.link}
                 onClick={handleSlideClick}
                 draggable={false}
-                className="relative block w-full h-full focus:outline-none select-none"
+                className="relative block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0B4B39] select-none"
               >
                 <Image
                   src={slide.image}
@@ -163,62 +188,26 @@ export function HeroCarousel() {
             </div>
           ))}
         </div>
-
-        {/* Previous Slide Arrow Button (Outside the scroll container for clean touch events) */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            prevSlide();
-          }}
-          onTouchEnd={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            prevSlide();
-          }}
-          aria-label="Previous slide"
-          className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 shadow-md flex items-center justify-center transition-all duration-200 opacity-75 hover:opacity-100 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer touch-manipulation"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        {/* Next Slide Arrow Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            nextSlide();
-          }}
-          onTouchEnd={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            nextSlide();
-          }}
-          aria-label="Next slide"
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 shadow-md flex items-center justify-center transition-all duration-200 opacity-75 hover:opacity-100 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer touch-manipulation"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
       </div>
 
-      {/* Accessible Pagination Indicators */}
-      <div className="flex items-center justify-center gap-2 py-3 bg-white">
+      {/* Accessible Pagination Indicators (44px vertical touch targets, 8px/24px visual pills) */}
+      <div className="flex items-center justify-center bg-white">
         {HERO_SLIDES.map((_, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => scrollToSlide(idx)}
             aria-label={`Go to slide ${idx + 1}`}
-            className={`rounded-full transition-all duration-300 touch-target-44 flex items-center justify-center ${
-              idx === current
-                ? "w-6 h-2 bg-[#0B4B39]"
-                : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
-            }`}
+            aria-current={idx === current ? "true" : undefined}
+            className="h-11 min-w-[28px] px-1.5 flex items-center justify-center cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-full"
           >
+            <span
+              className={`block rounded-full transition-all duration-300 ${
+                idx === current
+                  ? "w-6 h-2 bg-[#0B4B39]"
+                  : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+              }`}
+            />
             <span className="sr-only">Slide {idx + 1}</span>
           </button>
         ))}

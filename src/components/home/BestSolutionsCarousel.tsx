@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { MOCK_PRODUCTS } from "@/data/mock-products";
@@ -9,41 +9,28 @@ import { RatingStars } from "@/components/ui/RatingStars";
 
 export function BestSolutionsCarousel() {
   const { addToCart, setIsCartOpen } = useCart();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleScroll = () => {
-    isScrollingRef.current = true;
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 150);
-  };
 
   // 8 Best solution products for desktop 4x2 grid and mobile swipe, starting with Testo Booster Tablets
   const bestProducts = [
-    MOCK_PRODUCTS.find((p) => p.id === "prod-testo-booster")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-digest-zen")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-immuno-plus")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-kesh-oil")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-hair-vital-tabs")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-weight-gain-lehyam")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-joint-ease")!,
-    MOCK_PRODUCTS.find((p) => p.id === "prod-shilajit-resin")!,
-  ].filter(Boolean);
+    MOCK_PRODUCTS.find((p) => p.id === "prod-testo-booster"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-digest-zen"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-immuno-plus"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-kesh-oil"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-hair-vital-tabs"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-weight-gain-lehyam"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-joint-ease"),
+    MOCK_PRODUCTS.find((p) => p.id === "prod-shilajit-resin"),
+  ].filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   const handleAddToCart = (e: React.MouseEvent, product: (typeof bestProducts)[0]) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isScrollingRef.current) return;
     addToCart(product, 1);
   };
 
   const handleBuyNow = (e: React.MouseEvent, product: (typeof bestProducts)[0]) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isScrollingRef.current) return;
     addToCart(product, 1);
     setIsCartOpen(true);
   };
@@ -62,9 +49,7 @@ export function BestSolutionsCarousel() {
       {/* Horizontal Carousel on Mobile / Tablet, Responsive 4-Column Word Wrap Grid on Larger Screens: full width edge-to-edge */}
       <div className="w-full lg:max-w-[1720px] lg:mx-auto">
         <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 md:gap-7 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory touch-scroll-x px-0 lg:px-12 pb-4 pt-1 lg:pb-0"
+          className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-6 md:gap-7 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar overscroll-x-contain snap-x snap-mandatory px-0 lg:px-12 pb-4 pt-1 lg:pb-0"
         >
           {bestProducts.map((product, idx) => (
             <div

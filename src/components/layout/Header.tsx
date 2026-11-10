@@ -26,6 +26,13 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const isSearchOpenRef = useRef(isSearchOpen);
+
+  useEffect(() => {
+    isSearchOpenRef.current = isSearchOpen;
+  }, [isSearchOpen]);
+
+  const headerVisible = isVisible || isSearchOpen;
 
   // Smart hide on scroll down, show on scroll up with smooth animation
   useEffect(() => {
@@ -40,7 +47,7 @@ export function Header() {
       }
 
       // Keep visible if search input is currently open
-      if (isSearchOpen) {
+      if (isSearchOpenRef.current) {
         setIsVisible(true);
         lastScrollY.current = currentScrollY;
         return;
@@ -60,7 +67,7 @@ export function Header() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isSearchOpen]);
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +79,7 @@ export function Header() {
   return (
     <header
       className={`sticky top-0 z-40 bg-white transition-transform duration-300 ease-in-out ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
+        headerVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       {/* Mobile Header Bar (Height increased ~10% to 75px for balanced proportions) */}
@@ -82,7 +89,7 @@ export function Header() {
           type="button"
           onClick={() => setIsMobileNavOpen(true)}
           aria-label="Open mobile navigation menu"
-          className="w-11 h-11 -ml-1 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all touch-target-44"
+          className="w-11 h-11 -ml-1 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
         >
           <Menu className="w-6 h-6 stroke-[2.2]" />
         </button>
@@ -105,12 +112,13 @@ export function Header() {
         </div>
 
         {/* Right: Search & Cart bag with red notification dot */}
-        <div className="flex items-center gap-1 -mr-1">
+        <div className="flex items-center gap-0.5 -mr-1">
           <button
             type="button"
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             aria-label="Toggle search bar"
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all touch-target-44"
+            aria-expanded={isSearchOpen}
+            className="w-11 h-11 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
           >
             {isSearchOpen ? <X className="w-5.5 h-5.5" /> : <Search className="w-6 h-6 stroke-[2.2]" />}
           </button>
@@ -119,7 +127,7 @@ export function Header() {
             type="button"
             onClick={() => setIsCartOpen(true)}
             aria-label={`View cart, ${totalItems} items`}
-            className="relative w-10 h-10 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all touch-target-44"
+            className="relative w-11 h-11 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
           >
             <ShoppingBag className="w-6 h-6 stroke-[2.2]" />
             {totalItems > 0 && (
@@ -257,12 +265,17 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-6 text-slate-600 font-semibold text-xs sm:text-sm">
-            <a
-              href="#reviews"
-              className="hover:text-[#0B4B39] transition-colors"
+            <button
+              type="button"
+              onClick={() =>
+                alert(
+                  "[REVIEWS] Verified customer reviews & feedback will be connected in Milestone 2."
+                )
+              }
+              className="hover:text-[#0B4B39] transition-colors cursor-pointer"
             >
               Customer Reviews
-            </a>
+            </button>
             <a
               href="#footer"
               className="hover:text-[#0B4B39] transition-colors"
@@ -275,7 +288,12 @@ export function Header() {
 
       {/* Expandable Mobile Search Bar */}
       {isSearchOpen && (
-        <div className="py-3 px-4 lg:hidden border-t border-slate-100 bg-[#F8F7F2] animate-in fade-in slide-in-from-top-2 duration-150">
+        <div
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setIsSearchOpen(false);
+          }}
+          className="py-3 px-4 lg:hidden border-t border-slate-100 bg-[#F8F7F2]"
+        >
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"

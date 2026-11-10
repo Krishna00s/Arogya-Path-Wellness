@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/types/storefront";
@@ -16,13 +16,24 @@ interface ProductCardProps {
 export function ProductCard({ product, className, showRating = true }: ProductCardProps) {
   const { addToCart, setIsCartOpen } = useCart();
   const [justAdded, setJustAdded] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleAddToCartOnly = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product, 1);
     setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1200);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setJustAdded(false);
+      timeoutRef.current = null;
+    }, 1200);
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {

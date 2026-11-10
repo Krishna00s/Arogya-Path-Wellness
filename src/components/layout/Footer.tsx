@@ -27,11 +27,14 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#ecf4e9] text-[#333333] pt-12 pb-24 md:pb-8 border-t border-[#dce8d8] relative">
+    <footer
+      id="footer"
+      className="bg-[#ecf4e9] text-[#333333] pt-12 pb-24 lg:pb-8 border-t border-[#dce8d8] relative"
+    >
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10">
           {/* Column 1: Brand Info & Description */}
-          <div className="space-y-4">
+          <div id="about" className="space-y-4">
             <Link href="/" className="inline-block group focus:outline-none mb-1">
               <Image
                 src="/logo.png"
@@ -65,8 +68,9 @@ export function Footer() {
             <button
               type="button"
               onClick={() => setIsServicesOpen(!isServicesOpen)}
-              className="flex items-center justify-between w-full text-left group cursor-pointer focus:outline-none"
+              className="flex items-center justify-between w-full min-h-[44px] text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-md"
               aria-expanded={isServicesOpen}
+              aria-controls="footer-services-menu"
             >
               <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#1a2c16]">
                 SERVICES
@@ -79,8 +83,10 @@ export function Footer() {
             </button>
 
             <div
+              id="footer-services-menu"
+              aria-hidden={!isServicesOpen}
               className={`overflow-hidden transition-all duration-300 ${
-                isServicesOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                isServicesOpen ? "max-h-96 opacity-100 visible" : "max-h-0 opacity-0 invisible"
               }`}
             >
               <ul className="space-y-2 text-xs sm:text-[13px] text-[#444444] pt-1">
@@ -105,9 +111,13 @@ export function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#blogs" className="hover:text-[#0B4B39] transition-colors">
+                  <button
+                    type="button"
+                    className="hover:text-[#0B4B39] transition-colors cursor-pointer"
+                    onClick={() => alert("[BLOGS] Ayurvedic wellness articles & guides coming soon!")}
+                  >
                     Blogs
-                  </a>
+                  </button>
                 </li>
                 <li>
                   <button
@@ -177,7 +187,7 @@ export function Footer() {
           </div>
 
           {/* Column 4: ADDRESS */}
-          <div className="space-y-3">
+          <div id="contact" className="space-y-3">
             <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#1a2c16]">
               ADDRESS
             </h3>
@@ -262,7 +272,7 @@ export function Footer() {
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top of page"
-          className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-[#204617] text-white flex items-center justify-center shadow-lg hover:bg-[#2d6120] active:scale-95 transition-all cursor-pointer"
+          className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-40 w-11 h-11 rounded-full bg-[#204617] text-white flex items-center justify-center shadow-lg hover:bg-[#2d6120] active:scale-95 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#204617]"
         >
           <ArrowUp className="w-5 h-5 stroke-[2.5]" />
         </button>

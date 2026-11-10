@@ -1,37 +1,49 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X, ChevronRight, Mail, MapPin } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { MOCK_CATEGORIES } from "@/data/mock-categories";
+import { navigateToConcern } from "@/lib/utils";
 
 export function MobileNavDrawer() {
   const { isMobileNavOpen, setIsMobileNavOpen } = useCart();
+
+  useEffect(() => {
+    if (!isMobileNavOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMobileNavOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isMobileNavOpen, setIsMobileNavOpen]);
 
   if (!isMobileNavOpen) return null;
 
   const handleCategoryNav = (slug: string) => {
     setIsMobileNavOpen(false);
-    if (slug === "hair-care") {
-      const el = document.getElementById("hair-care");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-      window.dispatchEvent(
-        new CustomEvent("switch-concern-tab", { detail: { slug: "hair-care" } })
-      );
-      return;
-    }
-
-    window.dispatchEvent(
-      new CustomEvent("switch-concern-tab", { detail: { slug } })
-    );
-    const el = document.getElementById("ayurvedic-solutions");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    navigateToConcern(slug);
   };
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden flex">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation menu"
+      className="fixed inset-0 z-50 lg:hidden flex"
+    >
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
@@ -39,7 +51,7 @@ export function MobileNavDrawer() {
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-250">
+      <div className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10">
         {/* Header */}
         <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-white text-slate-900">
           <Link
@@ -59,7 +71,7 @@ export function MobileNavDrawer() {
             type="button"
             onClick={() => setIsMobileNavOpen(false)}
             aria-label="Close menu"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-700 hover:text-black hover:bg-slate-100 transition-colors"
+            className="w-11 h-11 rounded-full flex items-center justify-center text-slate-700 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
           >
             <X className="w-5 h-5" />
           </button>
