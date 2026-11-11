@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Menu,
   Search,
@@ -17,24 +18,38 @@ import { storefrontConfig } from "@/config/storefront";
 import { getAvailableProducts } from "@/data/mock-products";
 
 export function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
   const {
     totalItems,
     subtotal,
-    setIsCartOpen,
+    isMobileNavOpen,
     setIsMobileNavOpen,
     isSearchOpen,
     setIsSearchOpen,
   } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [isVisible, setIsVisible] = useState(true);
+  const [lastPathname, setLastPathname] = useState(pathname);
   const lastScrollY = useRef(0);
+
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    if (!isVisible) {
+      setIsVisible(true);
+    }
+  }
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+  }, [pathname]);
   const isSearchOpenRef = useRef(isSearchOpen);
 
   useEffect(() => {
     isSearchOpenRef.current = isSearchOpen;
   }, [isSearchOpen]);
 
-  const headerVisible = isVisible || isSearchOpen;
+  const headerVisible = isVisible || isSearchOpen || isMobileNavOpen;
 
   // Smart hide on scroll down, show on scroll up with smooth animation
   useEffect(() => {
@@ -74,7 +89,7 @@ export function Header() {
   const { sections, launchMode } = storefrontConfig;
   const searchPlaceholder =
     launchMode === "single-product"
-      ? "Search Testo Natural Power+..."
+      ? "Search Testo Booster Capsules..."
       : "Search churna, tablets, oils, capsules...";
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -92,7 +107,11 @@ export function Header() {
     if (matches.length > 0) {
       setIsSearchOpen(false);
       const el = document.getElementById("best-solutions");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        router.push(`/products/${matches[0].slug}`);
+      }
       return;
     }
 
@@ -108,20 +127,30 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 bg-white transition-transform duration-300 ease-in-out ${
+      id="store-main-header"
+      className={`sticky top-0 z-40 bg-white border-b border-slate-100 transition-transform duration-300 ease-in-out ${
         headerVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       {/* Mobile Header Bar (Height increased ~10% to 75px for balanced proportions) */}
       <div className="lg:hidden flex items-center justify-between h-[75px] sm:h-[84px] px-4">
-        {/* Left: Hamburger Button */}
+        {/* Left: Hamburger Button (toggles below-header menu cleanly without moving header) */}
         <button
           type="button"
-          onClick={() => setIsMobileNavOpen(true)}
-          aria-label="Open mobile navigation menu"
+          data-mobile-nav-trigger="true"
+          onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+          aria-expanded={isMobileNavOpen}
+          aria-controls="mobile-nav-drawer"
+          aria-label={
+            isMobileNavOpen ? "Close navigation menu" : "Open mobile navigation menu"
+          }
           className="w-11 h-11 -ml-1 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
         >
-          <Menu className="w-6 h-6 stroke-[2.2]" />
+          {isMobileNavOpen ? (
+            <X className="w-6 h-6 stroke-[2.2]" />
+          ) : (
+            <Menu className="w-6 h-6 stroke-[2.2]" />
+          )}
         </button>
 
         {/* Center: Official Brand Logo centered */}
@@ -153,9 +182,12 @@ export function Header() {
             {isSearchOpen ? <X className="w-5.5 h-5.5" /> : <Search className="w-6 h-6 stroke-[2.2]" />}
           </button>
 
-          <button
-            type="button"
-            onClick={() => setIsCartOpen(true)}
+          <Link
+            href="/cart"
+            onClick={() => {
+              setIsSearchOpen(false);
+              setIsMobileNavOpen(false);
+            }}
             aria-label={`View cart, ${totalItems} items`}
             className="relative w-11 h-11 flex items-center justify-center rounded-xl text-slate-800 hover:text-[#0B4B39] active:scale-95 transition-all cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
           >
@@ -165,7 +197,7 @@ export function Header() {
                 {totalItems}
               </span>
             )}
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -226,10 +258,13 @@ export function Header() {
               <span>Account</span>
             </button>
 
-            {/* Cart Button */}
-            <button
-              type="button"
-              onClick={() => setIsCartOpen(true)}
+            {/* Cart Link */}
+            <Link
+              href="/cart"
+              onClick={() => {
+                setIsSearchOpen(false);
+                setIsMobileNavOpen(false);
+              }}
               aria-label={`View cart, ${totalItems} items`}
               className="relative flex items-center gap-3 px-5 py-2.5 bg-[#0B4B39] hover:bg-[#063D2C] text-white rounded-full transition-all shadow-sm active:scale-95"
             >
@@ -244,7 +279,7 @@ export function Header() {
               <span className="text-sm font-extrabold">
                 {totalItems === 0 ? "Cart" : formatRupees(subtotal)}
               </span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -270,12 +305,12 @@ export function Header() {
               </a>
             )}
             {sections.bestSolutions && (
-              <a
-                href="#best-solutions"
+              <Link
+                href="/#best-solutions"
                 className="hover:text-[#0B4B39] transition-colors"
               >
                 {launchMode === "single-product" ? "Featured Product" : "Best Solutions"}
-              </a>
+              </Link>
             )}
             {sections.popularCategories && (
               <a

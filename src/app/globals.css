@@ -23,14 +23,13 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
   body {
     background-color: var(--color-herbal-cream);
     color: var(--color-charcoal);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 }
 

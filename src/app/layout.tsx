@@ -5,8 +5,8 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
-import { DemoCartDrawer } from "@/components/layout/DemoCartDrawer";
 import { Footer } from "@/components/layout/Footer";
+import { RouteScrollManager } from "@/components/layout/RouteScrollManager";
 
 export const metadata: Metadata = {
   title: "Arogya Path Wellness — Authentic Ayurvedic Care",
@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased selection:bg-emerald-200 selection:text-emerald-900">
         <CartProvider>
           {/* Top Announcement Bar */}
@@ -51,9 +51,6 @@ export default function RootLayout({
           {/* Mobile Nav Slide-over Drawer */}
           <MobileNavDrawer />
 
-          {/* Interactive Demo Cart Drawer */}
-          <DemoCartDrawer />
-
           {/* Main Content Area */}
           <main className="flex-1 w-full">{children}</main>
 
@@ -62,6 +59,9 @@ export default function RootLayout({
 
           {/* Mobile-Only Bottom Thumb Navigation (<= 768px) */}
           <MobileBottomNav />
+
+          {/* Ensure route transitions land cleanly at the very top of the page */}
+          <RouteScrollManager />
         </CartProvider>
       </body>
     </html>

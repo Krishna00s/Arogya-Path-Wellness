@@ -56,8 +56,8 @@ export function Footer() {
                 </a>
               </div>
               <div>
-                <a href="mailto:info@arogyapathwellness.com" className="footer-link">
-                  info@arogyapathwellness.com
+                <a href="mailto:arogyapathemail@gmail.com" className="footer-link">
+                  arogyapathemail@gmail.com
                 </a>
               </div>
             </div>
@@ -96,9 +96,9 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a href="#best-solutions" className="footer-link">
+                  <Link href="/#best-solutions" className="footer-link">
                     Products
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a href="#contact" className="footer-link">

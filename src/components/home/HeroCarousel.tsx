@@ -9,32 +9,44 @@ interface HeroSlide {
   image: string;
   alt: string;
   link: string;
+  bgClass?: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: "slide-1",
-    image: "/couple-promoting-mens-natural-support.png",
-    alt: "Couple Promoting Men’s Natural Support - Testo Natural Strength & Stamina",
+    image: "/images/products/testo-booster-capsules/couple-wellness-poster-2.png",
+    alt: "Arogya Path Testo Booster Capsules — Men's Natural Support for Strength, Stamina & Overall Wellness",
     link: "#best-solutions",
+    bgClass: "bg-[#F6F1EA]",
   },
   {
     id: "slide-2",
-    image: "/ayurvedic-stamina-blend-infographic.png",
-    alt: "Ayurvedic Stamina Blend Infographic - Testo Natural Power+ Key Herbal Ingredients",
+    image: "/images/products/testo-booster-capsules/ingredients-infographic.png",
+    alt: "Testo Booster Capsules Powerful Ayurvedic Blend — Ashwagandha, Gokhuru, Shilajit, Safed Musli & Saffron",
     link: "#best-solutions",
+    bgClass: "bg-[#FAF6F0]",
   },
   {
     id: "slide-3",
-    image: "/testo-natural-supplement-advertisement.png",
-    alt: "Testo Natural Supplement Advertisement - Daily Support for Men's Strength, Stamina & Overall Wellness",
+    image: "/images/products/testo-booster-capsules/natural-support-poster-3.png",
+    alt: "Testo Booster Capsules — More Energy, Better Stamina & Overall Wellness",
     link: "#best-solutions",
+    bgClass: "bg-[#F6EFE6]",
   },
   {
     id: "slide-4",
-    image: "/trusted-wellness-for-men.png",
-    alt: "Trusted Wellness for Men - Arogya Path Testo Natural Power+ Trusted by Lakhs of Indian Men",
+    image: "/images/products/testo-booster-capsules/ayurvedic-elevates-ad.png",
+    alt: "Arogya Path Testo Booster — Elevates Beyond Limits with Ayurvedic Herbs",
     link: "#best-solutions",
+    bgClass: "bg-[#0B0707]",
+  },
+  {
+    id: "slide-5",
+    image: "/images/products/testo-booster-capsules/trusted-mens-wellness-promo.png",
+    alt: "Trusted by Lakhs of Indian Men — Arogya Path Testo Booster Capsules For Men Wellness",
+    link: "#best-solutions",
+    bgClass: "bg-[#F6F1EA]",
   },
 ];
 
@@ -157,7 +169,7 @@ export function HeroCarousel() {
       onKeyDown={handleKeyDown}
     >
       {/* Promotional slide track wrapper */}
-      <div className="relative w-full aspect-[1199/1312] sm:aspect-square md:aspect-[1254/900] md:max-h-[620px] lg:max-h-[660px] mx-auto bg-[#FAF7F2]">
+      <div className="relative w-full aspect-[3/4] sm:aspect-square md:aspect-[1254/900] md:max-h-[620px] lg:max-h-[660px] mx-auto bg-[#FAF7F2]">
         {/* Hardware-accelerated horizontal scroll-snap track */}
         <div
           ref={scrollContainerRef}
@@ -173,12 +185,15 @@ export function HeroCarousel() {
                 href={slide.link}
                 onClick={handleSlideClick}
                 draggable={false}
-                className="relative block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0B4B39] select-none"
+                className={`relative block w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0B4B39] select-none ${
+                  slide.bgClass || "bg-[#FAF7F2]"
+                }`}
               >
                 <Image
                   src={slide.image}
                   alt={slide.alt}
                   fill
+                  loading="eager"
                   priority={idx === 0}
                   draggable={false}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 768px, 1440px"

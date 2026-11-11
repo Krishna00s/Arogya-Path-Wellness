@@ -2,12 +2,16 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Home, LayoutGrid, ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { storefrontConfig } from "@/config/storefront";
 
 export function MobileBottomNav() {
-  const { totalItems, setIsCartOpen, setIsMobileNavOpen } = useCart();
+  const pathname = usePathname();
+  const { totalItems, setIsMobileNavOpen } = useCart();
+  const isHomeActive = pathname === "/";
+  const isCartActive = pathname === "/cart";
 
   return (
     <nav
@@ -18,7 +22,10 @@ export function MobileBottomNav() {
         {/* Home */}
         <Link
           href="/"
-          className="flex flex-col items-center justify-center w-16 h-14 text-[#0B4B39] transition-colors active:scale-95 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl"
+          onClick={() => setIsMobileNavOpen(false)}
+          className={`flex flex-col items-center justify-center w-16 h-14 transition-colors active:scale-95 touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl ${
+            isHomeActive ? "text-[#0B4B39]" : "text-slate-600 hover:text-[#0B4B39]"
+          }`}
         >
           <Home className="w-6 h-6 stroke-[2.2]" />
           <span className="text-[11px] font-extrabold mt-0.5 tracking-tight">
@@ -30,7 +37,7 @@ export function MobileBottomNav() {
         <button
           type="button"
           onClick={() => setIsMobileNavOpen(true)}
-          className="flex flex-col items-center justify-center w-16 h-14 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl"
+          className="flex flex-col items-center justify-center w-16 h-14 text-slate-600 hover:text-[#0B4B39] transition-colors active:scale-95 cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl"
         >
           <LayoutGrid className="w-6 h-6 stroke-[2]" />
           <span className="text-[11px] font-bold mt-0.5 tracking-tight">
@@ -39,10 +46,13 @@ export function MobileBottomNav() {
         </button>
 
         {/* Cart with Badge */}
-        <button
-          type="button"
-          onClick={() => setIsCartOpen(true)}
-          className="relative flex flex-col items-center justify-center w-16 h-14 text-slate-500 hover:text-[#0B4B39] transition-colors active:scale-95 cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl"
+        <Link
+          href="/cart"
+          onClick={() => setIsMobileNavOpen(false)}
+          aria-label={`Open cart page, ${totalItems} items`}
+          className={`relative flex flex-col items-center justify-center w-16 h-14 transition-colors active:scale-95 cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] rounded-xl ${
+            isCartActive ? "text-[#0B4B39]" : "text-slate-600 hover:text-[#0B4B39]"
+          }`}
         >
           <div className="relative">
             <ShoppingBag className="w-6 h-6 stroke-[2]" />
@@ -55,7 +65,7 @@ export function MobileBottomNav() {
           <span className="text-[11px] font-bold mt-0.5 tracking-tight">
             Cart
           </span>
-        </button>
+        </Link>
 
         {/* Account */}
         <button

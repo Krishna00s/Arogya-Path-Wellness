@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/types/storefront";
 import { RatingStars } from "./RatingStars";
@@ -14,7 +15,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className, showRating = true }: ProductCardProps) {
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -36,38 +37,44 @@ export function ProductCard({ product, className, showRating = true }: ProductCa
     }, 1200);
   };
 
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product, 1);
-    setIsCartOpen(true);
-  };
+  const productHref = `/products/${product.slug}`;
 
   return (
     <div
-      className={`group relative flex flex-col justify-between bg-transparent rounded-none border-0 shadow-none overflow-hidden ${
+      className={`group relative flex flex-col justify-between bg-white p-2.5 sm:p-3.5 rounded-2xl border border-slate-300/80 shadow-2xs overflow-hidden ${
         className || ""
       }`}
     >
-      {/* 1. Product Image: 1:1 Aspect-Square, seamless white background, image-scoped hover/touch swap */}
-      <ProductImagePreview
-        src={product.image}
-        hoverSrc={product.hoverImage}
-        alt={product.name}
-        hoverAlt={`${product.name} alternate view`}
-        sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
-        badge={product.badge}
-        badgeClassName="bottom-2 right-2 text-[10px] sm:text-[11px] px-2 py-0.5"
-        loading="lazy"
-      />
+      {/* 1. Product Image: 1:1 Aspect-Square, navigates to PDP on click */}
+      <Link
+        href={productHref}
+        aria-label={`View ${product.name}`}
+        className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B]"
+      >
+        <ProductImagePreview
+          src={product.image}
+          hoverSrc={product.hoverImage}
+          alt={product.name}
+          hoverAlt={`${product.name} alternate view`}
+          sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
+          badge={product.badge}
+          badgeClassName="bottom-2 right-2 text-[10px] sm:text-[11px] px-2 py-0.5"
+          loading="lazy"
+        />
+      </Link>
 
-      {/* 2. Product Info: clean sans-serif typography, no background box */}
+      {/* 2. Product Info: clean sans-serif typography */}
       <div className="pt-2.5 sm:pt-3 flex flex-col flex-1 justify-between">
         <div>
           {/* Title (sans-serif, medium, clean) */}
-          <h3 className="font-normal sm:font-medium text-xs sm:text-sm md:text-base text-[#222222] line-clamp-1 leading-snug group-hover:text-[#355E2B] transition-colors">
-            {product.name} {product.subtitle ? `- ${product.subtitle}` : ""}
-          </h3>
+          <Link
+            href={productHref}
+            className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B] rounded-sm"
+          >
+            <h3 className="font-normal sm:font-medium text-xs sm:text-sm md:text-base text-[#222222] line-clamp-1 leading-snug group-hover:text-[#355E2B] transition-colors">
+              {product.name} {product.subtitle ? `- ${product.subtitle}` : ""}
+            </h3>
+          </Link>
 
           {/* Star Rating: Judge.me style green stars with score & reviews (conditional) */}
           {showRating && (
@@ -110,14 +117,13 @@ export function ProductCard({ product, className, showRating = true }: ProductCa
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={handleBuyNow}
-            aria-label="Buy product now"
+          <Link
+            href={productHref}
+            aria-label={`Buy ${product.name}`}
             className="flex-1 h-10 sm:h-11 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-xs sm:text-sm tracking-wide uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation"
           >
             BUY NOW
-          </button>
+          </Link>
         </div>
       </div>
     </div>

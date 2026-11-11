@@ -17,14 +17,14 @@ export function CampaignTrustBanner() {
         <a
           href="#best-solutions"
           onClick={handleClick}
-          className="block relative w-full aspect-square max-w-full sm:max-w-[620px] md:max-w-[720px] lg:max-w-[780px] mx-auto sm:rounded-2xl overflow-hidden shadow-none sm:shadow-sm cursor-pointer bg-[#F5F2EC] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] focus-visible:ring-offset-2"
+          className="block relative w-full aspect-[3/4] max-w-full sm:max-w-[540px] md:max-w-[620px] lg:max-w-[680px] mx-auto sm:rounded-2xl overflow-hidden shadow-none sm:shadow-sm cursor-pointer bg-[#F5F2EC] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39] focus-visible:ring-offset-2"
         >
           <Image
-            src="/trusted-wellness-for-men.png"
-            alt="Trusted Wellness for Men - Arogya Path Testo Natural Power+ Trusted by Lakhs of Indian Men"
+            src="/images/products/testo-booster-capsules/trusted-mens-wellness-promo.png"
+            alt="Trusted by Lakhs of Indian Men — Arogya Path Testo Booster Capsules For Men Wellness"
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 720px, 780px"
-            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 620px, 680px"
+            className="object-contain"
           />
         </a>
       </div>

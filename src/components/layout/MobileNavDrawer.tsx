@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { X, ChevronRight, Mail, MapPin } from "lucide-react";
+import { ChevronRight, Mail, MapPin, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { MOCK_CATEGORIES } from "@/data/mock-categories";
 import { storefrontConfig } from "@/config/storefront";
@@ -11,27 +10,90 @@ import { navigateToConcern } from "@/lib/utils";
 
 export function MobileNavDrawer() {
   const { isMobileNavOpen, setIsMobileNavOpen } = useCart();
+  const panelRef = useRef<HTMLElement | null>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const wasOpenRef = useRef(false);
+  const [topOffset, setTopOffset] = useState<number>(115);
 
+  // Measure header bottom edge dynamically so the menu always opens right below Header & AnnouncementBar
   useEffect(() => {
+    const syncHeaderOffset = () => {
+      const headerEl = document.getElementById("store-main-header");
+      if (!headerEl) return;
+      const rect = headerEl.getBoundingClientRect();
+      const nextTop = Math.max(56, Math.round(rect.bottom));
+      setTopOffset(nextTop);
+    };
+
+    syncHeaderOffset();
     if (!isMobileNavOpen) return;
+
+    const rafId = window.requestAnimationFrame(syncHeaderOffset);
+    window.addEventListener("resize", syncHeaderOffset);
+    window.addEventListener("scroll", syncHeaderOffset, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", syncHeaderOffset);
+      window.removeEventListener("scroll", syncHeaderOffset);
+    };
+  }, [isMobileNavOpen]);
+
+  // Body scroll lock, Escape/Tab focus management & return-focus restoration
+  useEffect(() => {
+    if (!isMobileNavOpen) {
+      if (wasOpenRef.current) {
+        wasOpenRef.current = false;
+        const trigger =
+          previousFocusRef.current ||
+          (document.querySelector('[data-mobile-nav-trigger="true"]') as HTMLElement | null);
+        trigger?.focus({ preventScroll: true });
+        previousFocusRef.current = null;
+      }
+      return;
+    }
+
+    wasOpenRef.current = true;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    const focusTimer = window.setTimeout(() => {
+      firstLinkRef.current?.focus({ preventScroll: true });
+    }, 40);
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsMobileNavOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && panelRef.current) {
+        const focusables = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = prevOverflow;
     };
   }, [isMobileNavOpen, setIsMobileNavOpen]);
-
-  if (!isMobileNavOpen) return null;
 
   const handleCategoryNav = (slug: string) => {
     setIsMobileNavOpen(false);
@@ -44,127 +106,152 @@ export function MobileNavDrawer() {
 
   return (
     <div
+      id="mobile-nav-drawer"
       role="dialog"
-      aria-modal="true"
+      aria-modal={isMobileNavOpen}
+      aria-hidden={!isMobileNavOpen}
       aria-label="Mobile navigation menu"
-      className="fixed inset-0 z-50 lg:hidden flex"
+      style={{ top: `${topOffset}px` }}
+      className={`fixed inset-x-0 bottom-0 z-[35] lg:hidden overflow-hidden ${
+        isMobileNavOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+      } transition-[visibility] duration-300 motion-reduce:transition-none`}
     >
-      {/* Backdrop */}
+      {/* Dimmed Backdrop Below Header */}
       <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
         onClick={() => setIsMobileNavOpen(false)}
+        aria-hidden="true"
+        className={`absolute inset-0 bg-slate-900/55 backdrop-blur-[1px] transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+          isMobileNavOpen ? "opacity-100" : "opacity-0"
+        }`}
       />
 
-      {/* Drawer Panel */}
-      <div className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10">
-        {/* Header */}
-        <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-white text-slate-900">
-          <Link
-            href="/"
-            onClick={() => setIsMobileNavOpen(false)}
-            className="flex items-center focus:outline-none"
-          >
-            <Image
-              src="/logo.png"
-              alt="Arogya Path - The Path to Wellness"
-              width={120}
-              height={55}
-              className="h-[46px] w-auto object-contain"
-            />
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsMobileNavOpen(false)}
-            aria-label="Close menu"
-            className="w-11 h-11 rounded-full flex items-center justify-center text-slate-700 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4B39]"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content Scrollable */}
+      {/* Left-to-Right Sliding Panel Opening Directly Below Header */}
+      <aside
+        ref={panelRef}
+        className={`relative z-10 w-[85vw] max-w-xs h-full bg-white shadow-2xl border-r border-slate-200 flex flex-col pl-[env(safe-area-inset-left)] transform transition-transform duration-300 ease-out motion-reduce:transition-none ${
+          isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Scrollable Menu Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
-          {/* Quick Jump */}
           <div>
-            <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">
               Browse Store
             </h4>
             <div className="space-y-1">
               <Link
+                ref={firstLinkRef}
                 href="/"
+                tabIndex={isMobileNavOpen ? 0 : -1}
                 onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-bold text-[#0B4B39] bg-emerald-50"
+                className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-bold text-[#0B4B39] bg-emerald-50 hover:bg-emerald-100/80 transition-colors min-h-[44px]"
               >
                 <span>Store Homepage</span>
                 <ChevronRight className="w-4 h-4 text-[#0B4B39]" />
               </Link>
+
+              <Link
+                href="/products/testo-booster-capsules"
+                tabIndex={isMobileNavOpen ? 0 : -1}
+                onClick={() => setIsMobileNavOpen(false)}
+                className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-bold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <Package className="w-4 h-4 text-[#355E2B]" />
+                  <span>Testo Booster Capsules</span>
+                </span>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </Link>
+
               {sections.selectConcern && (
-                <a
-                  href="#concern"
+                <Link
+                  href="/#concern"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
                   onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
                 >
                   <span>Select Your Concern</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </a>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
               )}
+
               {sections.bestSolutions && (
-                <a
-                  href="#best-solutions"
+                <Link
+                  href="/#best-solutions"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
                   onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
                 >
                   <span>
                     {launchMode === "single-product" ? "Featured Product" : "Best Solutions"}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </a>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
               )}
-              {sections.popularCategories && (
-                <a
-                  href="#popular-categories"
+
+              {sections.watchAndShop && (
+                <Link
+                  href="/#watch-and-shop"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
                   onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
+                >
+                  <span>Watch &amp; Shop</span>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
+              )}
+
+              {sections.popularCategories && (
+                <Link
+                  href="/#popular-categories"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
                 >
                   <span>Popular Categories</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </a>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
               )}
+
               {sections.ayurvedicSolutions && (
-                <a
-                  href="#ayurvedic-solutions"
+                <Link
+                  href="/#ayurvedic-solutions"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
                   onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
                 >
                   <span>Ayurvedic Solutions</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </a>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
               )}
+
               {sections.hairCareCollection && (
-                <a
-                  href="#hair-care"
+                <Link
+                  href="/#hair-care"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
                   onClick={() => setIsMobileNavOpen(false)}
-                  className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
                 >
                   <span>Hair Care Collection</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
-                </a>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </Link>
               )}
+
               <a
                 href="#footer"
+                tabIndex={isMobileNavOpen ? 0 : -1}
                 onClick={() => setIsMobileNavOpen(false)}
-                className="flex items-center justify-between py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                className="flex items-center justify-between py-2.5 px-3 rounded-xl text-[13px] font-semibold text-slate-800 hover:bg-slate-50 transition-colors min-h-[44px]"
               >
                 <span>About &amp; Contact</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
+                <ChevronRight className="w-4 h-4 text-slate-500" />
               </a>
             </div>
           </div>
 
-          {/* Categories Grid (shown only when multi-category browsing is enabled) */}
           {showCategoryBrowse && (
             <div>
-              <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+              <h4 className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">
                 Shop By Concern
               </h4>
               <div className="space-y-1">
@@ -172,11 +259,12 @@ export function MobileNavDrawer() {
                   <button
                     key={cat.id}
                     type="button"
+                    tabIndex={isMobileNavOpen ? 0 : -1}
                     onClick={() => handleCategoryNav(cat.slug)}
-                    className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-xs text-slate-700 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors text-left cursor-pointer"
+                    className="w-full flex items-center justify-between py-2 px-3 rounded-xl text-[13px] text-slate-800 hover:bg-emerald-50 hover:text-[#0B4B39] transition-colors text-left cursor-pointer"
                   >
                     <span className="font-semibold">{cat.name}</span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-xs font-medium text-slate-600">
                       {cat.itemCount} items
                     </span>
                   </button>
@@ -185,31 +273,35 @@ export function MobileNavDrawer() {
             </div>
           )}
 
-          {/* Help & Policies */}
-          <div className="pt-4 border-t border-slate-100">
-            <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+          {/* Help & Contact */}
+          <div className="pt-4 border-t border-slate-200">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">
               Customer Support
             </h4>
-            <div className="space-y-2 text-xs text-slate-600">
+            <div className="space-y-2 text-xs font-medium text-slate-700">
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#0B4B39]" />
-                <a href="mailto:info@arogyapathwellness.com" className="hover:text-[#0B4B39]">
-                  info@arogyapathwellness.com
+                <Mail className="w-4 h-4 text-[#0B4B39] shrink-0" />
+                <a
+                  href="mailto:arogyapathemail@gmail.com"
+                  tabIndex={isMobileNavOpen ? 0 : -1}
+                  className="hover:text-[#0B4B39] font-semibold"
+                >
+                  arogyapathemail@gmail.com
                 </a>
               </div>
               <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#0B4B39] shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-[#0B4B39] shrink-0 mt-0.5" />
                 <span>Ward No. 16, Ashok Nagar, Barwa Toli, Lohardaga, Jharkhand - 835302</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-slate-200 bg-slate-50 text-[10px] text-slate-500 text-center font-medium">
+        {/* Footer with safe-area bottom inset */}
+        <div className="p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] border-t border-slate-200 bg-slate-50 text-[11px] text-slate-700 text-center font-semibold">
           © 2026 Arogya Path Marketing • All Rights Reserved
         </div>
-      </div>
+      </aside>
     </div>
   );
 }

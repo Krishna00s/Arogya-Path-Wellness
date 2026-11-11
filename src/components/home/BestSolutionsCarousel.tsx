@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { getAvailableProducts } from "@/data/mock-products";
 import { useCart } from "@/context/CartContext";
@@ -8,7 +9,7 @@ import { RatingStars } from "@/components/ui/RatingStars";
 import { ProductImagePreview } from "@/components/ui/ProductImagePreview";
 
 export function BestSolutionsCarousel() {
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart } = useCart();
 
   // Active storefront catalog filtered via centralized storefrontConfig & product status
   const bestProducts = getAvailableProducts();
@@ -21,13 +22,6 @@ export function BestSolutionsCarousel() {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product, 1);
-  };
-
-  const handleBuyNow = (e: React.MouseEvent, product: (typeof bestProducts)[0]) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product, 1);
-    setIsCartOpen(true);
   };
 
   // Single-product balanced presentation when only one active product is configured
@@ -49,17 +43,23 @@ export function BestSolutionsCarousel() {
           </div>
 
           <div className="max-w-md md:max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 lg:gap-12 items-center bg-white md:p-8 rounded-2xl md:border md:border-slate-200/80 md:shadow-xs">
-              {/* Product Image: 1:1 Aspect Ratio with image-scoped hover/touch swap (no scaling) */}
-              <ProductImagePreview
-                src={product.image}
-                hoverSrc={product.hoverImage}
-                alt={product.brand ? `${product.brand} ${product.name} - ${product.packSize}` : product.name}
-                hoverAlt={`${product.name} alternate view`}
-                sizes="(max-width: 768px) 92vw, 420px"
-                badge={product.badge}
-                containerClassName="rounded-xl border border-slate-100"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 md:gap-10 lg:gap-12 items-center bg-white p-4 sm:p-6 md:p-8 rounded-2xl border border-slate-300/80 shadow-xs">
+              {/* Product Image: navigates to PDP on click; preserves image-only hover/touch preview */}
+              <Link
+                href={`/products/${product.slug}`}
+                aria-label={`View ${product.name}`}
+                className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B]"
+              >
+                <ProductImagePreview
+                  src={product.image}
+                  hoverSrc={product.hoverImage}
+                  alt={product.brand ? `${product.brand} ${product.name} - ${product.packSize}` : product.name}
+                  hoverAlt={`${product.name} alternate view`}
+                  sizes="(max-width: 768px) 92vw, 420px"
+                  badge={product.badge}
+                  containerClassName="rounded-xl border border-slate-100"
+                />
+              </Link>
 
               {/* Product Details & CTAs */}
               <div className="flex flex-col justify-between space-y-4">
@@ -82,9 +82,14 @@ export function BestSolutionsCarousel() {
                     )}
                   </div>
 
-                  <h3 className="font-semibold text-2xl sm:text-3xl text-[#111827] leading-tight">
-                    {product.name}
-                  </h3>
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B] rounded-md"
+                  >
+                    <h3 className="font-semibold text-2xl sm:text-3xl text-[#111827] group-hover:text-[#355E2B] transition-colors leading-tight">
+                      {product.name}
+                    </h3>
+                  </Link>
 
                   {product.rating !== undefined && (
                     <div className="pt-0.5">
@@ -133,14 +138,13 @@ export function BestSolutionsCarousel() {
                     <ShoppingCart className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white stroke-[2]" />
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={(e) => handleBuyNow(e, product)}
-                    aria-label="Buy now"
+                  <Link
+                    href={`/products/${product.slug}`}
+                    aria-label={`Buy ${product.name}`}
                     className="flex-1 h-11 sm:h-12 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B] focus-visible:ring-offset-1"
                   >
                     BUY NOW
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -169,74 +173,86 @@ export function BestSolutionsCarousel() {
           {bestProducts.map((product, idx) => (
             <div
               key={product.id}
-              className={`w-[285px] sm:w-[325px] md:w-[360px] lg:w-full shrink-0 lg:shrink snap-start bg-transparent border-0 shadow-none flex flex-col justify-between box-content lg:box-border ${
+              className={`w-[285px] sm:w-[325px] md:w-[360px] lg:w-full shrink-0 lg:shrink snap-start box-content lg:box-border ${
                 idx === 0 ? "pl-4 sm:pl-6 md:pl-8 lg:pl-0" : ""
               } ${
                 idx === bestProducts.length - 1 ? "pr-4 sm:pr-6 md:pr-8 lg:pr-0" : ""
               }`}
             >
-              {/* Product Image: 1:1 Aspect Ratio with image-scoped hover/touch swap (no scaling) */}
-              <ProductImagePreview
-                src={product.image}
-                hoverSrc={product.hoverImage}
-                alt={product.name}
-                hoverAlt={`${product.name} alternate view`}
-                sizes="(max-width: 640px) 315px, 380px"
-                badge={product.badge}
-                containerClassName="rounded-xl"
-              />
+              <div className="h-full bg-white p-3 sm:p-4 rounded-2xl border border-slate-300/80 shadow-2xs flex flex-col justify-between">
+                {/* Product Image: 1:1 Aspect Ratio with image-scoped hover/touch swap (no scaling) */}
+                <Link
+                  href={`/products/${product.slug}`}
+                  aria-label={`View ${product.name}`}
+                  className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B]"
+                >
+                  <ProductImagePreview
+                    src={product.image}
+                    hoverSrc={product.hoverImage}
+                    alt={product.name}
+                    hoverAlt={`${product.name} alternate view`}
+                    sizes="(max-width: 640px) 315px, 380px"
+                    badge={product.badge}
+                    containerClassName="rounded-xl"
+                  />
+                </Link>
 
-              {/* Product Info: Increased typography font sizes */}
-              <div className="pt-3.5 flex flex-col flex-1 justify-between">
-                <div>
-                  {/* Product Title: Increased font size */}
-                  <h3 className="font-medium text-base sm:text-lg md:text-xl text-[#222222] line-clamp-1 leading-snug">
-                    {product.name} {product.subtitle ? `- ${product.subtitle}` : ""}
-                  </h3>
+                {/* Product Info: Increased typography font sizes */}
+                <div className="pt-3.5 flex flex-col flex-1 justify-between">
+                  <div>
+                    {/* Product Title: Increased font size */}
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#355E2B] rounded-md"
+                    >
+                      <h3 className="font-medium text-base sm:text-lg md:text-xl text-[#222222] group-hover:text-[#355E2B] transition-colors line-clamp-1 leading-snug">
+                        {product.name} {product.subtitle ? `- ${product.subtitle}` : ""}
+                      </h3>
+                    </Link>
 
-                  {/* Rating: Deep green stars with score & reviews */}
-                  <div className="mt-2 mb-2">
-                    <RatingStars
-                      rating={product.rating ?? 4.8}
-                      reviewCount={product.reviewCount ?? 278}
-                      size="sm"
-                      color="green"
-                      showScore={true}
-                    />
-                  </div>
+                    {/* Rating: Deep green stars with score & reviews */}
+                    <div className="mt-2 mb-2">
+                      <RatingStars
+                        rating={product.rating ?? 4.8}
+                        reviewCount={product.reviewCount ?? 278}
+                        size="sm"
+                        color="green"
+                        showScore={true}
+                      />
+                    </div>
 
-                  {/* Price Row: Increased font sizes */}
-                  <div className="flex items-center gap-2.5 flex-wrap my-2">
-                    <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#111827]">
-                      ₹{product.price.toLocaleString("en-IN")}
-                    </span>
-                    {product.compareAtPrice > product.price && (
-                      <span className="text-sm sm:text-base text-slate-500 line-through font-normal">
-                        Rs. {product.compareAtPrice.toLocaleString("en-IN")}.00
+                    {/* Price Row: Increased font sizes */}
+                    <div className="flex items-center gap-2.5 flex-wrap my-2">
+                      <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#111827]">
+                        ₹{product.price.toLocaleString("en-IN")}
                       </span>
-                    )}
+                      {product.compareAtPrice > product.price && (
+                        <span className="text-sm sm:text-base text-slate-500 line-through font-normal">
+                          Rs. {product.compareAtPrice.toLocaleString("en-IN")}.00
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Dual Action Buttons: Increased height and with border-radius (rounded-lg) */}
-                <div className="flex items-center gap-2.5 mt-3.5 w-full">
-                  <button
-                    type="button"
-                    onClick={(e) => handleAddToCart(e, product)}
-                    aria-label="Add to cart"
-                    className="h-11 sm:h-12 w-12 sm:w-13 bg-[#222222] hover:bg-[#3d3d3d] hover:brightness-110 text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer touch-manipulation"
-                  >
-                    <ShoppingCart className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white stroke-[2]" />
-                  </button>
+                  {/* Dual Action Buttons: Increased height and with border-radius (rounded-lg) */}
+                  <div className="flex items-center gap-2.5 mt-3.5 w-full">
+                    <button
+                      type="button"
+                      onClick={(e) => handleAddToCart(e, product)}
+                      aria-label="Add to cart"
+                      className="h-11 sm:h-12 w-12 sm:w-13 bg-[#222222] hover:bg-[#3d3d3d] hover:brightness-110 text-white flex items-center justify-center shrink-0 rounded-lg transition-colors active:scale-95 shadow-2xs cursor-pointer touch-manipulation"
+                    >
+                      <ShoppingCart className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-white stroke-[2]" />
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={(e) => handleBuyNow(e, product)}
-                    aria-label="Buy now"
-                    className="flex-1 h-11 sm:h-12 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation"
-                  >
-                    BUY NOW
-                  </button>
+                    <Link
+                      href={`/products/${product.slug}`}
+                      aria-label={`Buy ${product.name}`}
+                      className="flex-1 h-11 sm:h-12 bg-[#355E2B] hover:bg-[#437837] hover:brightness-110 text-white font-bold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center rounded-lg transition-colors active:scale-98 shadow-2xs cursor-pointer touch-manipulation"
+                    >
+                      BUY NOW
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

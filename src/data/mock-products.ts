@@ -1,29 +1,31 @@
 import { Product } from "@/types/storefront";
 import { storefrontConfig } from "@/config/storefront";
+import { buildTestoBoosterVariants, BASE_BOTTLE_PRICE_RUPEES } from "@/lib/pricing";
 
 export const MOCK_PRODUCTS: Product[] = [
-  // 1. Featured Men's Wellness — Testo Natural Power+ (Launch Product)
+  // 1. Featured Men's Wellness — Testo Booster Capsules (Launch Product)
   {
     id: "prod-testo-booster",
-    slug: "testo-natural-power-plus",
-    name: "Testo Natural Power+",
+    slug: "testo-booster-capsules",
+    name: "Testo Booster Capsules",
     brand: "Arogya Path",
     subtitle: "30 Veg Capsules",
     packSize: "30 Veg Capsules",
-    price: 859,
-    compareAtPrice: 1499,
-    discountPercent: 43,
+    price: BASE_BOTTLE_PRICE_RUPEES,
+    compareAtPrice: BASE_BOTTLE_PRICE_RUPEES,
+    discountPercent: 0,
     rating: 4.8,
     reviewCount: 384,
     categorySlug: "mens-wellness",
     concern: "mens-wellness",
-    image: "/arogya-path-testo-capsules-advertisement.png",
-    hoverImage: "/testo-natural-power-plus-product-portrait.png",
+    image: "/images/products/testo-booster-capsules/product-front-ad.png",
+    hoverImage: "/images/products/testo-booster-capsules/portrait-promo-1.png",
     badge: "Bestseller",
     inStock: true,
     status: "active",
     shortDescription:
-      "30 Veg Capsules with Ayurvedic herbs supporting stamina, strength, energy, and men's wellness.",
+      "Men's Wellness formula in vegetarian capsules by Arogya Path.",
+    variants: buildTestoBoosterVariants(),
     isDemo: true,
   },
 
@@ -374,4 +376,8 @@ export function getFeaturedProduct(): Product | undefined {
     available.find((p) => p.id === storefrontConfig.featuredProductId) ??
     available[0]
   );
+}
+
+export function getAvailableProductBySlug(slug: string): Product | undefined {
+  return getAvailableProducts().find((p) => p.slug === slug);
 }

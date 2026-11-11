@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   ChevronRight,
@@ -341,7 +342,8 @@ export function WatchAndShopModal({
   products,
   onClose,
 }: WatchAndShopModalProps) {
-  const { addToCart, setIsCartOpen } = useCart();
+  const router = useRouter();
+  const { addToCart } = useCart();
   const frameRef = useRef<HTMLDivElement | null>(null);
   const shareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -522,8 +524,8 @@ export function WatchAndShopModal({
           onShopProduct={() => {
             if (!linkedProduct) return;
             addToCart(linkedProduct, 1);
-            setIsCartOpen(true);
             handleClose();
+            router.push("/cart");
           }}
         />
       </div>
