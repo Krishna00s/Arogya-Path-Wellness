@@ -24,8 +24,11 @@ export function CartPageView() {
     linePricingMap,
     updateQuantity,
     removeFromCart,
+    totalMrp,
     subtotal,
     totalSavings,
+    totalProductOfferSavings,
+    totalBundleSavings,
     totalItems,
     totalBottles,
     hasUnpricedItems,
@@ -55,12 +58,15 @@ export function CartPageView() {
     );
   };
 
+  const cartOverallDiscountPercent =
+    totalMrp > 0 ? Math.round(((totalMrp - subtotal) / totalMrp) * 100) : 0;
+
   const tierNudgeMessage =
     totalBottles === 1
-      ? "Add 1 more bottle to unlock 5% off (2 bottles at ₹1,632), or 2 more bottles for 10% off (₹2,319)."
+      ? "43% OFF MRP applied. Add 1 more bottle for an extra 5% bundle discount (₹1,632 total • 46% OFF MRP), or 2 more bottles for an extra 10% bundle discount (₹2,319 total • 48% OFF MRP)."
       : totalBottles === 2
-      ? "5% multi-bottle discount active! Add 1 more bottle to unlock 10% off across your entire cart."
-      : "10% maximum multi-bottle discount is active across all bottles in your cart.";
+      ? "Extra 5% bundle discount active (46% total OFF MRP)! Add 1 more bottle to unlock the extra 10% bundle discount (48% total OFF MRP)."
+      : `Extra 10% bundle discount active across all ${totalBottles} bottles (${cartOverallDiscountPercent}% total OFF MRP).`;
 
   return (
     <section
@@ -160,11 +166,17 @@ export function CartPageView() {
                 const lineFinal =
                   pricing?.lineFinalRupees ??
                   (item.unitPrice ?? item.product.price) * item.quantity;
-                const lineBase =
-                  pricing?.lineBaseRupees ??
-                  (item.baseUnitPrice ?? item.product.price) * item.quantity;
-                const lineSavings = Math.max(0, lineBase - lineFinal);
-                const discPct = pricing?.effectiveDiscountPercent ?? 0;
+                const lineMrp =
+                  pricing?.lineMrpRupees ??
+                  Math.max(
+                    item.product.compareAtPrice,
+                    item.baseUnitPrice ?? item.product.price
+                  ) *
+                    (item.bottles ?? 1) *
+                    item.quantity;
+                const lineTotalSavings = Math.max(0, lineMrp - lineFinal);
+                const overallPct = pricing?.overallDiscountPercent ?? 0;
+                const extraPct = pricing?.extraBundleDiscountPercent ?? 0;
 
                 return (
                   <div
@@ -217,20 +229,27 @@ export function CartPageView() {
                             Price pending confirmation
                           </span>
                         ) : (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-extrabold text-base sm:text-lg text-slate-900">
-                              {formatRupees(lineFinal)}
-                            </span>
-                            {lineBase > lineFinal && (
-                              <>
-                                <span className="text-xs sm:text-sm font-semibold text-slate-500 line-through">
-                                  {formatRupees(lineBase)}
-                                </span>
-                                <span className="text-[11px] sm:text-xs font-bold text-[#264D1E] bg-[#EBF3ED] px-2 py-0.5 rounded">
-                                  {discPct > 0 ? `${discPct}% off • ` : ""}
-                                  Save {formatRupees(lineSavings)}
-                                </span>
-                              </>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-extrabold text-base sm:text-lg text-slate-900">
+                                {formatRupees(lineFinal)}
+                              </span>
+                              {lineMrp > lineFinal && (
+                                <>
+                                  <span className="text-xs sm:text-sm font-semibold text-slate-500 line-through">
+                                    MRP {formatRupees(lineMrp)}
+                                  </span>
+                                  <span className="text-[11px] sm:text-xs font-bold text-[#264D1E] bg-[#EBF3ED] px-2 py-0.5 rounded">
+                                    {overallPct > 0 ? `${overallPct}% OFF • ` : ""}
+                                    Save {formatRupees(lineTotalSavings)}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                            {extraPct > 0 && (
+                              <p className="text-[11px] font-bold text-[#8B1A1A]">
+                                Extra {extraPct}% bundle discount applied
+                              </p>
                             )}
                           </div>
                         )}
@@ -302,22 +321,31 @@ export function CartPageView() {
                   )}
                 </div>
 
-                {/* Totals */}
+                {/* Totals (all MRPs & prices inclusive of applicable taxes; no extra GST added) */}
                 <div className="space-y-2 text-sm text-slate-700 pt-2 border-t border-slate-100">
                   <div className="flex justify-between">
                     <span>
-                      Subtotal ({totalBottles}{" "}
+                      Total MRP ({totalBottles}{" "}
                       {totalBottles === 1 ? "bottle" : "bottles"})
                     </span>
                     <span className="font-semibold text-slate-900">
-                      {formatRupees(subtotal + totalSavings)}
+                      {formatRupees(totalMrp)}
                     </span>
                   </div>
 
-                  {totalSavings > 0 && (
-                    <div className="flex justify-between text-[#15803D] font-bold">
-                      <span>Multi-Bottle Pack Discount</span>
-                      <span>-{formatRupees(totalSavings)}</span>
+                  {totalProductOfferSavings > 0 && (
+                    <div className="flex justify-between text-[#15803D] font-semibold">
+                      <span>Discount on MRP</span>
+                      <span>-{formatRupees(totalProductOfferSavings)}</span>
+                    </div>
+                  )}
+
+                  {totalBundleSavings > 0 && (
+                    <div className="flex justify-between text-[#8B1A1A] font-bold">
+                      <span>
+                        Extra {totalBottles >= 3 ? "10%" : "5%"} Bundle Discount
+                      </span>
+                      <span>-{formatRupees(totalBundleSavings)}</span>
                     </div>
                   )}
 
@@ -334,10 +362,22 @@ export function CartPageView() {
                     </span>
                   </div>
 
-                  <div className="flex justify-between text-base sm:text-lg font-extrabold text-slate-900 pt-3 border-t border-slate-200">
-                    <span>Order Total</span>
+                  <div className="flex justify-between items-baseline text-base sm:text-lg font-extrabold text-slate-900 pt-3 border-t border-slate-200">
+                    <div>
+                      <span>Order Total</span>
+                      <span className="block text-[11px] font-medium text-slate-500">
+                        Inclusive of all applicable taxes
+                      </span>
+                    </div>
                     <span>{formatRupees(subtotal)}</span>
                   </div>
+
+                  {totalSavings > 0 && (
+                    <p className="text-xs font-bold text-[#15803D] bg-[#EBF3ED] border border-[#C6DBC9] rounded-lg px-3 py-2 text-center">
+                      You save {formatRupees(totalSavings)} (
+                      {cartOverallDiscountPercent}% OFF MRP) on this order
+                    </p>
+                  )}
                 </div>
 
                 {checkoutNotice && (

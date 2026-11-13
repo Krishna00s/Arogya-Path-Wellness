@@ -180,8 +180,8 @@ export const TESTO_BOOSTER_DETAIL_CONTENT: ProductDetailContent = {
     {
       id: "hl-3",
       icon: "zap",
-      title: "Pack Savings Up to 10%",
-      subtitle: "Save ₹86 / ₹258 on packs",
+      title: "Save Up to 48% Off MRP",
+      subtitle: "Extra 5% & 10% bundle discounts",
     },
     {
       id: "hl-4",
@@ -357,7 +357,7 @@ export const TESTO_BOOSTER_DETAIL_CONTENT: ProductDetailContent = {
       id: "faq-packs",
       question: "What pack options and bundle savings are available?",
       answer:
-        "You can choose Pack of 1 (1 bottle, 30 Veg Capsules at ₹859), Pack of 2 (2 bottles, 60 Veg Capsules at ₹1,632 with a 5% pack discount saving ₹86), or Pack of 3 (3 bottles, 90 Veg Capsules at ₹2,319 with a 10% pack discount saving ₹258).",
+        "All prices and MRPs are inclusive of applicable taxes (single-bottle MRP: ₹1,499; base selling price: ₹859). Choose Pack of 1 (30 Veg Capsules) at ₹859 (save ₹640, 43% off MRP), Pack of 2 (60 Veg Capsules, MRP ₹2,998) with an extra 5% bundle discount on ₹1,718 for ₹1,632 total (save ₹1,366, 46% off MRP), or Pack of 3 (90 Veg Capsules, MRP ₹4,497) with an extra 10% bundle discount on ₹2,577 for ₹2,319 total (save ₹2,178, 48% off MRP).",
     },
     {
       id: "faq-ingredients",

@@ -9,17 +9,46 @@ export interface ProductVariant {
   packSize: string;
   /** Null when final confirmed price has not yet been provided */
   price: number | null;
-  /** Undiscounted regular pack price (bottles * single bottle selling price) */
+  /** Undiscounted base selling price (bottles * single bottle selling price) */
   basePrice?: number;
+  /** Total pack MRP (bottles * single bottle MRP), inclusive of taxes */
   compareAtPrice: number | null;
   verifiedMrp?: number | null;
+  /** Overall discount percentage vs MRP (e.g. 43, 46, 48) */
   discountPercent?: number;
+  /** Additional multi-bottle bundle discount percentage on top of base selling price (0, 5, 10) */
+  extraBundleDiscountPercent?: number;
+  /** Total rupee savings vs MRP */
   savingsRupees?: number;
+  /** Additional bundle rupee savings vs base selling price */
+  bundleSavingsRupees?: number;
   perBottleRupees?: number;
+  onlinePriceRupees?: number;
+  onlineDiscountRupees?: number;
+  onlineTotalSavingsRupees?: number;
+  onlineDiscountPercent?: number;
   exactDecimalRupees?: number;
   isTaxInclusiveVerified?: boolean;
   bundleTag?: string;
+  extraBundleLabel?: string;
   isPriceConfirmed: boolean;
+}
+
+export interface ServerTelemetryAdapterPayload {
+  /** Identifier of the trusted server-side analytics/telemetry ingestion adapter */
+  readonly adapterId: "ga4-realtime" | "posthog" | "shiprocket-orders" | "internal-telemetry";
+  /** Authenticated server-side timestamp */
+  readonly serverTimestamp: number;
+  /** Verified distinct active visitor sessions in rolling window */
+  readonly liveVisitors: number | null;
+  /** Verified successful orders placed in preceding 120 minutes */
+  readonly soldLast2Hours: number | null;
+}
+
+export interface StorefrontRealtimeMetrics {
+  liveVisitors: number | null;
+  soldLast2Hours: number | null;
+  lastUpdated?: string;
 }
 
 export interface Product {
@@ -43,6 +72,7 @@ export interface Product {
   status: ProductStatus;
   shortDescription: string;
   variants?: ProductVariant[];
+  realtimeMetrics?: StorefrontRealtimeMetrics;
   isDemo: true;
 }
 

@@ -21,8 +21,11 @@ interface CartContextType {
   setIsSearchOpen: (open: boolean) => void;
   totalItems: number;
   totalBottles: number;
+  totalMrp: number;
   subtotal: number;
   totalSavings: number;
+  totalProductOfferSavings: number;
+  totalBundleSavings: number;
   hasUnpricedItems: boolean;
 }
 
@@ -108,7 +111,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [cartItems]
   );
 
-  // Dynamically apply product bottle-tier discounts (2 bottles -> 5%, 3+ bottles -> 10%)
+  // Dynamically apply pricing source of truth (MRP ₹1,499, ₹859 base, extra 5% at 2 bottles, extra 10% at 3+ bottles)
   const linePricingMap = useMemo(() => {
     const result: Record<string, AllocatedCartLinePricing> = {};
     const groupedByProduct = new Map<string, CartItem[]>();
@@ -122,7 +125,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     for (const items of groupedByProduct.values()) {
       const sampleProduct = items[0].product;
       const supportsBottleTiers = Boolean(
-        sampleProduct.variants?.some((v) => (v.discountPercent ?? 0) > 0)
+        sampleProduct.variants?.some(
+          (v) =>
+            (v.extraBundleDiscountPercent ?? 0) > 0 ||
+            (v.discountPercent ?? 0) > 0
+        )
       );
 
       if (supportsBottleTiers) {
@@ -132,7 +139,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }));
         const allocated = allocateTieredCartLines(
           lines,
-          sampleProduct.price * PAISE_PER_RUPEE
+          sampleProduct.price * PAISE_PER_RUPEE,
+          (sampleProduct.compareAtPrice > sampleProduct.price
+            ? sampleProduct.compareAtPrice
+            : sampleProduct.price) * PAISE_PER_RUPEE
         );
         Object.assign(result, allocated);
       } else {
@@ -144,11 +154,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           const lineBase =
             (item.baseUnitPrice ?? item.unitPrice ?? item.product.price) *
             item.quantity;
+          const lineMrp =
+            Math.max(
+              sampleProduct.compareAtPrice,
+              item.baseUnitPrice ?? item.product.price
+            ) *
+            (item.bottles ?? 1) *
+            item.quantity;
+          const lineTotalSavings = Math.max(0, lineMrp - lineFinal);
+          const overallPct =
+            lineMrp > 0
+              ? Math.round((lineTotalSavings / lineMrp) * 100)
+              : item.discountPercent ?? 0;
+
           result[item.id] = {
             lineFinalRupees: lineFinal,
+            lineMrpRupees: lineMrp,
             lineBaseRupees: lineBase,
-            lineSavingsRupees: Math.max(0, lineBase - lineFinal),
-            effectiveDiscountPercent: item.discountPercent ?? 0,
+            lineProductOfferSavingsRupees: Math.max(0, lineMrp - lineBase),
+            lineBundleSavingsRupees: Math.max(0, lineBase - lineFinal),
+            lineSavingsRupees: lineTotalSavings,
+            overallDiscountPercent: overallPct,
+            extraBundleDiscountPercent: item.discountPercent ?? 0,
+            effectiveDiscountPercent: overallPct,
             totalProductBottles: (item.bottles ?? 1) * item.quantity,
           };
         }
@@ -167,6 +195,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [cartItems]
   );
 
+  const totalMrp = useMemo(
+    () =>
+      cartItems.reduce(
+        (acc, item) => acc + (linePricingMap[item.id]?.lineMrpRupees ?? 0),
+        0
+      ),
+    [cartItems, linePricingMap]
+  );
+
   const subtotal = useMemo(
     () =>
       cartItems.reduce(
@@ -180,6 +217,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () =>
       cartItems.reduce(
         (acc, item) => acc + (linePricingMap[item.id]?.lineSavingsRupees ?? 0),
+        0
+      ),
+    [cartItems, linePricingMap]
+  );
+
+  const totalProductOfferSavings = useMemo(
+    () =>
+      cartItems.reduce(
+        (acc, item) =>
+          acc + (linePricingMap[item.id]?.lineProductOfferSavingsRupees ?? 0),
+        0
+      ),
+    [cartItems, linePricingMap]
+  );
+
+  const totalBundleSavings = useMemo(
+    () =>
+      cartItems.reduce(
+        (acc, item) =>
+          acc + (linePricingMap[item.id]?.lineBundleSavingsRupees ?? 0),
         0
       ),
     [cartItems, linePricingMap]
@@ -203,8 +260,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsSearchOpen,
       totalItems,
       totalBottles,
+      totalMrp,
       subtotal,
       totalSavings,
+      totalProductOfferSavings,
+      totalBundleSavings,
       hasUnpricedItems,
     }),
     [
@@ -217,8 +277,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       isSearchOpen,
       totalItems,
       totalBottles,
+      totalMrp,
       subtotal,
       totalSavings,
+      totalProductOfferSavings,
+      totalBundleSavings,
       hasUnpricedItems,
     ]
   );

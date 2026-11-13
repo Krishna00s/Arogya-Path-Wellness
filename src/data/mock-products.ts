@@ -1,6 +1,13 @@
 import { Product } from "@/types/storefront";
 import { storefrontConfig } from "@/config/storefront";
-import { buildTestoBoosterVariants, BASE_BOTTLE_PRICE_RUPEES } from "@/lib/pricing";
+import {
+  buildTestoBoosterVariants,
+  BASE_BOTTLE_PRICE_RUPEES,
+  SINGLE_BOTTLE_MRP_RUPEES,
+  calculatePackPricing,
+} from "@/lib/pricing";
+
+const TESTO_SINGLE_PACK_PRICING = calculatePackPricing(1);
 
 export const MOCK_PRODUCTS: Product[] = [
   // 1. Featured Men's Wellness — Testo Booster Capsules (Launch Product)
@@ -12,8 +19,8 @@ export const MOCK_PRODUCTS: Product[] = [
     subtitle: "30 Veg Capsules",
     packSize: "30 Veg Capsules",
     price: BASE_BOTTLE_PRICE_RUPEES,
-    compareAtPrice: BASE_BOTTLE_PRICE_RUPEES,
-    discountPercent: 0,
+    compareAtPrice: SINGLE_BOTTLE_MRP_RUPEES,
+    discountPercent: TESTO_SINGLE_PACK_PRICING.overallDiscountPercent,
     rating: 4.8,
     reviewCount: 384,
     categorySlug: "mens-wellness",
